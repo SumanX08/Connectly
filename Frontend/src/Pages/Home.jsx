@@ -1,0 +1,171 @@
+import React, { useEffect } from 'react'
+import { AnimatePresence,motion } from 'framer-motion'
+import ProfileCard from '../Components/ProfileCard'
+import ActionButtons from '../Components/ActionButtons'
+import { useState } from 'react'
+import useMatchedStore from "../../Stores/useMatchedStore"
+import useProfileStore from '../../Stores/useProfileStore.js'
+import axios from 'axios'
+import useAuthStore from '../../Stores/useAuthStore.js'
+import useFilterStore from '../../Stores/useFilterStore';
+import qs from 'qs';
+
+import { socket } from '../socket.js'
+
+function Home() {
+const [direction,setDirection]=useState(0)
+const[currentProfileIndex,setCurrentProfileIndex]=useState(0)
+const [isTransitioning, setIsTransitioning] = useState(false);
+const { matchTopProfile, matchedProfiles } = useMatchedStore();
+const { allProfiles, setAllProfiles } = useProfileStore();
+const currentProfile = allProfiles[currentProfileIndex];
+const loggedInUserId = localStorage.getItem("user");
+const { filters } = useFilterStore();
+
+
+useEffect(() => {
+  if (!loggedInUserId) return;
+
+  socket.connect();
+
+  socket.on("connect", () => {
+    socket.emit("join", loggedInUserId);
+  });
+
+  return () => {
+    socket.disconnect();
+  };
+}, [loggedInUserId]);
+
+
+useEffect(() => {
+  const fetchProfiles = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const params = {};
+
+      if (filters.skills.length > 0) {
+        params.skills = filters.skills;
+      }
+      if (filters.location) {
+        params.location = filters.location;
+      }
+      if (filters.ageRange?.length === 2) {
+        params.minAge = filters.ageRange[0];
+        params.maxAge = filters.ageRange[1];
+      }
+
+
+      const res = await axios.get("http://localhost:5000/api/profiles/suggestions", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params,
+        paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }), // ✅ important
+      });
+
+      console.log("Fetched profiles:", res.data);
+      setAllProfiles(res.data);
+    } catch (error) {
+      console.error("Error fetching profiles:", error);
+    }
+  };
+
+  fetchProfiles();
+}, [filters]);
+ // ✅ refetch whenever filters change
+
+
+  if (allProfiles.length === 0) {
+  return (
+    <div className='min-h-screen flex justify-center items-center'>
+      <h1 className='text-white text-center text-2xl'>Loading profiles...</h1>
+    </div>
+  );
+}
+
+   if (!currentProfile) return <div className='min-h-screen flex jusity-center items-center' > <h1 className='text-white text-center text-2xl'>No more profiles</h1></div>;
+
+  const handleSkip=()=>{
+    if(isTransitioning) return
+    setIsTransitioning(true)
+    setDirection(-1)
+   
+setCurrentProfileIndex((prev) => {
+  const next = prev + 1;
+  console.log("Next profile index:", next);
+  return next;
+});
+ 
+    console.log(direction,currentProfileIndex,isTransitioning)
+  }
+  const handleConnect=async()=>{
+    if(isTransitioning) return
+    setIsTransitioning(true)
+    matchTopProfile()
+    setDirection(1)
+
+    const receiverId=currentProfile._id
+    
+    socket.emit("send-connection",{
+      sender:loggedInUserId,
+      receiver:receiverId
+    })
+    console.log(loggedInUserId,receiverId)
+    await axios.post("http://localhost:5000/api/connections/connect-request",{ senderId: loggedInUserId,receiverId: receiverId})
+    .catch((error) => {
+  console.error("Connect request error:", error.response?.data || error.message);
+});
+    setCurrentProfileIndex((prev) => {
+  const next = prev + 1;
+  console.log("Next profile index:", next);
+  return next;
+});
+
+    console.log(matchedProfiles)
+  }
+
+   const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
+      scale: 0.8
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? -300 : 300,
+      opacity: 0,
+      scale: 0.8
+    })
+  };
+  
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen ">
+      <AnimatePresence custom={direction} mode='wait' onExitComplete={()=>{setIsTransitioning(false)}}>
+        <motion.div 
+        key={currentProfile._id} 
+        variants={slideVariants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={{
+  x: { type: "spring", stiffness: 300, damping: 30 },
+  opacity: { duration: 0.2 },
+  scale: { duration: 0.2 },
+}}>
+           <ProfileCard profile={currentProfile}  isDisabled={isTransitioning} />
+        </motion.div>
+       
+      </AnimatePresence>
+
+      <ActionButtons onConnect={handleConnect} onSkip={handleSkip} />
+    </div>
+  )
+}
+
+export default Home
