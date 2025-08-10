@@ -16,6 +16,7 @@ import { useLocation } from "react-router-dom";
 import ResetPassword from "./Pages/ResetPassword";
 import ForgotPassword from "./Pages/ForgotPassword";
 import OAuthSuccess from "./Pages/OAuthSuccess";
+import {Toaster} from "sonner"
 
 
 function App() {
@@ -61,7 +62,9 @@ const location = useLocation();
           <Route path="message" element={<ProtectedRoutes><MessageBox/></ProtectedRoutes>} />
           <Route path="/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
           <Route path="/filters" element={<ProtectedRoutes><Filters /></ProtectedRoutes>} />
+         
         </Routes>
+         <Toaster position="top-center" richColors closeButton theme="dark" />
    {isAuthenticated && !isLandingPage && (
         <Navbar active={activePage} onNavigate={setActivePage} />
       )}

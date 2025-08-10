@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
       receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
       avatar: { type: String, default: "" },
       createdAt: { type: Date, default: Date.now },
-      username: { type: String, unique: true, sparse: true }
+      username: String
     }
   ]
 

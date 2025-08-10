@@ -1,90 +1,98 @@
-import express from "express"
-import Chat from "../Models/Chat.js"
+import express from "express";
+import Conversation from "../Models/Conversation.js";
 import Message from "../Models/Message.js";
-import authMiddleware from "../Middleware/authMiddleware.js"
+import authMiddleware from "../Middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Create or get chat between two users
-router.post("/", authMiddleware,async (req, res) => {
-    
-  const { senderId, receiverId } = req.body;
-
+/**
+ * 📌 Start a conversation (or return existing one)
+ */
+router.post("/start", authMiddleware, async (req, res) => {
   try {
-    let chat = await Chat.findOne({ members: { $all: [senderId, receiverId] } });
+    const { receiverId } = req.body;
+    const senderId = req.user.id;
 
-    if (!chat) {
-      chat = await Chat.create({ members: [senderId, receiverId] });
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] }
+    });
+
+    if (!conversation) {
+      conversation = new Conversation({
+        participants: [senderId, receiverId]
+      });
+      await conversation.save();
     }
 
-    res.status(200).json(chat);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to create chat" });
+    res.json(conversation);
+  } catch (error) {
+    console.error("Start conversation error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-
+/**
+ * 📌 Send a message
+ */
 router.post("/send", authMiddleware, async (req, res) => {
-  const senderId = req.user._id;
-
   try {
-    const { chatId, content } = req.body;
+    const { conversationId, content,receiverId,senderId } = req.body;
 
-    if (!chatId || !content) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    const chat = await Chat.findById(chatId);
-    if (!chat) {
-      return res.status(404).json({ error: "Chat not found" });
-    }
-
-    const receiverId = chat.members.find(
-      (id) => id.toString() !== senderId.toString()
-    );
-
-    const newMessage = new Message({
-      chatId,
-      senderId,
+    const message = new Message({
+      conversationId,
       receiverId,
+      senderId,
       content,
+      timestamp: new Date()
     });
 
-    const savedMessage = await newMessage.save();
-    const populatedMessage = await savedMessage.populate("senderId", "name avatar");
+    await message.save();
 
-    await Chat.findByIdAndUpdate(chatId, {
-      lastMessage: populatedMessage.content,
-      updatedAt: Date.now(),
+    // Update conversation's last updated timestamp
+    await Conversation.findByIdAndUpdate(conversationId, {
+      updatedAt: new Date()
     });
 
-    res.status(201).json(populatedMessage);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to send message", err });
+    res.status(201).json(message);
+  } catch (error) {
+    console.error("Send message error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.get("/:chatId",authMiddleware, async (req, res) => {
+/**
+ * 📌 Get all conversations for logged-in user
+ */
+router.get("/conversations", authMiddleware, async (req, res) => {
   try {
-    const chat = await Chat.findById(req.params.chatId);
-    const userId = req.user._id;
+    const conversations = await Conversation.find({
+      participants: req.user.id
+    })
+      .populate("participants", "username email avatar")
+      .sort({ updatedAt: -1 });
 
-    if (!chat.members.includes(userId)) {
-      return res.status(403).json({ error: "Unauthorized" });
-    }
-
-    const messages = await Message.find({ chatId: chat._id })
-      .populate("sender", "name avatar")
-      .sort({ createdAt: 1 });
-
-    res.status(200).json(messages);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch messages" });
+    res.json(conversations);
+  } catch (error) {
+    console.error("Get conversations error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
+/**
+ * 📌 Get messages for a specific conversation
+ */
+router.get("/messages/:conversationId", authMiddleware, async (req, res) => {
+  try {
+    const { conversationId } = req.params;
 
+    const messages = await Message.find({ conversationId })
+      .sort({ timestamp: 1 });
+
+    res.json(messages);
+  } catch (error) {
+    console.error("Get messages error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 export default router;

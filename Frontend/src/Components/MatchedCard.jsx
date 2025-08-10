@@ -28,7 +28,7 @@ const MatchedCard = ({ username, age, avatar, _id }) => {
     <>
       {/* Card */}
       <div className="hover:p-1 rounded-2xl bg-gradient-to-tr from-purple-600 to-blue-700 mt-5">
-        <div className="bg-zinc-900 rounded-2xl border-gray-500 border-2 w-full max-w-md mx-auto p-6  flex flex-col items-center text-center">
+        <div className="bg-zinc-900 rounded-2xl hover:border-none border-gray-500 border-2 w-full max-w-md mx-auto p-6  flex flex-col items-center text-center">
           <img
             src={avatar}
             alt={`${username}'s profile`}

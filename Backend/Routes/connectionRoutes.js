@@ -9,12 +9,12 @@ router.post('/connect-request', async (req, res) => {
   
   try {
     const receiverUser = await User.findById(receiverId)
-    const senderUser=await User.findById(receiverId)
+    const senderUser=await User.findById(senderId)
     if (!receiverUser||!senderUser) return res.status(404).json({ error: "Receiver not found" });
 
-    if (receiverUser.pendingRequests.includes(senderId)) {
-      return res.status(400).json({ message: 'Request already sent' });
-    }
+    if (receiverUser.pendingRequests.some(id => id.toString() === senderId.toString())) {
+  return res.status(400).json({ message: 'Request already sent' });
+}
 
     receiverUser.pendingRequests.push(senderId)
     receiverUser.notifications.push({type:"connect",
@@ -111,18 +111,28 @@ router.post('/skip', async (req, res) => {
   }
 });
 
-router.get('/notifications',authMiddleware,async (req,res)=>{
-  
-  const userId = req.user._id; 
-  console.log(userId)
-   
-  const user= await User.findById(userId)
-  if (!user) return res.status(404).json({ error: "User not found" });
+router.get("/notifications", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .populate("pendingRequests", "username name avatar"); // ✅ add fields you need
 
-  res.json(user.notifications)
-  console.log(user.notifications)
+    // Shape data so frontend always gets the same structure as socket
+    const notifications = user.pendingRequests.map(sender => ({
+      type: "connect",
+      sender: {
+        _id: sender._id,
+        name: sender.name || sender.username,
+        avatar: sender.avatar
+      },
+      receiver: req.user.id
+    }));
 
-})
+    res.json(notifications);
+  } catch (error) {
+    console.error("Error loading notifications:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 router.get("/matches", authMiddleware, async (req, res) => {
   try {
