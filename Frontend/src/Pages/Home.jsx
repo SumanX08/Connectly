@@ -153,8 +153,31 @@ function Home() {
     })
   };
 
+  const isFilterActive =
+  (filters.skills && filters.skills.length > 0) ||
+  (filters.location && filters.location.trim() !== "") ||
+  (filters.ageRange &&
+    filters.ageRange.length === 2 &&
+    (filters.ageRange[0] != null || filters.ageRange[1] != null));
+
+
   return (
     <div className="flex flex-col justify-center items-center min-h-screen ">
+      {isFilterActive && (
+    <div className="bg-zinc-900 border-gray-500 border-2 text-gray-300 px-4 py-2 rounded-lg mb-4 text-sm text-center">
+      <strong>Filtered Profiles:</strong>{" "}
+      {filters.skills?.length > 0 && (
+        <span>Skills: {filters.skills.join(", ")} </span>
+      )}
+      {filters.location && <span> | Location: {filters.location} </span>}
+      {filters.ageRange?.length === 2 && (
+        <span>
+          {" "}
+          | Age: {filters.ageRange[0]} - {filters.ageRange[1]}
+        </span>
+      )}
+    </div>
+  )}
       <AnimatePresence custom={direction} mode='wait' onExitComplete={() => { setIsTransitioning(false) }}>
         <motion.div
           key={currentProfile._id}

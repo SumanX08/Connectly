@@ -1,6 +1,6 @@
+// Notifications.jsx
 import React, { useState, useEffect } from 'react';
-import BellButton from './BellButton';
-import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { Bell, CheckCircle2, XCircle } from 'lucide-react';
 import { socket } from '../socket';
 import axios from "axios";
 import { toast } from 'sonner';
@@ -14,7 +14,6 @@ const Notifications = () => {
   useEffect(() => {
     socket.connect();
 
-    // When a new connection request arrives
     socket.on("receive-connection", ({ sender }) => {
       setNotifications(prev => [
         ...prev,
@@ -22,7 +21,6 @@ const Notifications = () => {
       ]);
     });
 
-    // Real-time accept notification for the sender
     socket.on("connection-accepted", ({ username }) => {
       toast.success(`${username} accepted your connection request`);
     });
@@ -34,7 +32,6 @@ const Notifications = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Ensure each notification has receiver info
         const withReceiver = res.data.map(n => ({
           ...n,
           receiver: n.receiver || { _id: currentUser?._id }
@@ -55,7 +52,6 @@ const Notifications = () => {
   }, [currentUser?._id]);
 
   const handleAccept = async (sender, receiver) => {
-    console.log(sender,receiver)
     try {
       const senderId = sender?._id || sender;
       const receiverId = receiver?._id || receiver || currentUser?._id;
@@ -67,10 +63,8 @@ const Notifications = () => {
 
       setNotifications(prev => prev.filter(n => (n.sender?._id || n.sender) !== senderId));
 
-      // Toast for receiver only
       toast.success("Connection accepted successfully");
 
-      // Notify sender in real-time
       socket.emit("accept-connection", {
         sender: senderId,
         receiver: receiverId,
@@ -101,15 +95,21 @@ const Notifications = () => {
 
   return (
     <div className="relative">
-      <BellButton onClick={() => setOpen(true)} />
-      
-      {notifications.length > 0 && (
-        <>
-          <span className="absolute top-1 right-1 bg-red-500 rounded-full w-3 h-3 animate-ping opacity-75"></span>
-          <span className="absolute top-1 right-1 bg-red-500 rounded-full w-2 h-2"></span>
-        </>
-      )}
+      <button
+  onClick={() => setOpen(true)}
+  className="cursor-pointer relative flex items-center justify-center w-12 h-[45px] rounded-[5px] bg-[#2e2e2e] shadow-md transition-transform duration-150 active:scale-90"
+>
+  <Bell size={20} color="#f3f3f3" strokeWidth={2} />
+  {notifications.length > 0 && (
+    <>
+      <span className="absolute top-0 right-0 bg-red-500 rounded-full w-3 h-3 animate-ping opacity-75"></span>
+      <span className="absolute top-0 right-0 bg-red-500 rounded-full w-2 h-2"></span>
+    </>
+  )}
+</button>
 
+
+      {/* Modal */}
       {open && (
         <>
           <div
@@ -123,7 +123,7 @@ const Notifications = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                className="absolute top-3 right-5 text-gray-300 hover:text-red-500 text-4xl cursor-pointer "
+                className="absolute top-3 right-5 text-gray-300 hover:text-red-500 text-4xl cursor-pointer"
                 onClick={() => setOpen(false)}
               >
                 &times;
@@ -151,16 +151,16 @@ const Notifications = () => {
                     </div>
                     <div className="flex gap-3">
                       <button
-                        className="bg-green-500 text-white px-3 py-1 rounded-md text-xs cursor-pointer"
+                        className="bg-green-500 text-white p-2 rounded-md cursor-pointer"
                         onClick={() => handleAccept(n.sender, n.receiver)}
                       >
-                        <FaCheckCircle size={24} />
+                        <CheckCircle2 size={20} />
                       </button>
                       <button
-                        className="bg-red-500 text-white px-3 py-1 rounded-md text-xs cursor-pointer"
+                        className="bg-red-500 text-white p-2 rounded-md cursor-pointer"
                         onClick={() => handleReject(n.sender, n.receiver)}
                       >
-                        <FaTimesCircle size={24} />
+                        <XCircle size={20} />
                       </button>
                     </div>
                   </div>

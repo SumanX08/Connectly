@@ -1,13 +1,13 @@
-const Sidebar = ({ matchedProfiles, onSelect, selectedUser }) => {
+const Sidebar = ({ matchedProfiles, onSelect, selectedUser, }) => {
   return (
-    <div className="border-r border-gray-800 max-w-sm w-1/3 p-4">
+    <div className=" h-full md:max-w-sm py-4">
       {Array.isArray(matchedProfiles) &&
         matchedProfiles.map((user, idx) => (
           <div
             key={user._id ?? idx}
             onClick={() => {onSelect(user)
-               console.log(user)}}
-            className={`flex gap-3 items-center p-2 cursor-pointer  transition border-b border-gray-50 ${
+            }}
+            className={`flex gap-3 items-center rounded p-2 cursor-pointer  transition border-b border-gray-800 ${
               selectedUser?._id === user._id ? "bg-zinc-800 " : "hover:bg-zinc-900 "
             }`}
           >
@@ -23,4 +23,3 @@ const Sidebar = ({ matchedProfiles, onSelect, selectedUser }) => {
 };
 
 export default Sidebar;
-

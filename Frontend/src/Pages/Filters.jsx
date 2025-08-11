@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import useFilterStore from '../../Stores/useFilterStore';
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router';
 
 export default function Filters() {
   const {
@@ -14,6 +16,7 @@ export default function Filters() {
   const [skillInput, setSkillInput] = useState('');
   const [localLocation, setLocalLocation] = useState(location);
   const [localAgeRange, setLocalAgeRange] = useState(ageRange);
+  const navigate=useNavigate()
 
   const addSkill = () => {
     const trimmed = skillInput.trim();
@@ -46,7 +49,9 @@ export default function Filters() {
     ageRange: localAgeRange,
   });
 
-  alert('Filters applied!');
+  toast.info("Filter Applied")
+  navigate("/home")
+
 };
 
   return (

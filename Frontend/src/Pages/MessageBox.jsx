@@ -20,13 +20,24 @@ const MessageBox = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen max-h-screen py-20 gap-4 bg-black text-white px-6">
-      <Sidebar
-        matchedProfiles={matchedProfiles}
-        onSelect={setSelectedUser}
-        selectedUser={selectedUser}
-      />
-      <ChatWindow selectedUser={selectedUser} />
+    <div className="flex  min-h-screen max-h-screen py-20  bg-black text-white px-6">
+      <div
+        className={`
+          ${selectedUser ? "hidden" : "block"}
+          md:block
+          w-full md:w-1/4
+          border-r border-gray-800
+          overflow-auto
+        `}
+      >
+        <Sidebar
+          matchedProfiles={matchedProfiles}
+          onSelect={setSelectedUser}
+          selectedUser={selectedUser}
+        />
+      </div>
+     
+        <ChatWindow selectedUser={selectedUser} onBack={() => setSelectedUser(null)} />
     </div>
   );
 };
