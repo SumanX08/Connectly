@@ -107,7 +107,7 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
   if (!selectedUser) {
     return (
-      <div className="flex-1 flex items-center justify-center text-2xl text-gray-400">
+      <div className="flex-1 flex items-center justify-center text-2xl text-gray-400 hidden md:block">
         Select a chat to start messaging
       </div>
     );
@@ -115,7 +115,9 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
 return (
   <div
-    className="flex flex-col md:px-6 bg-black w-full md:w-3/4"
+    className={`flex flex-col md:px-6  md:py- bg-black min-h-0 ${selectedUser ? "block" : "hidden"} md:block w-full md:w-3/4 overflow-y-scroll  scrollbar-hide 
+          
+        `}
   >
     {/* HEADER */}
     <div className="flex-shrink-0 flex gap-2 items-center mb-4 pb-2 border-b border-gray-800 h-16">

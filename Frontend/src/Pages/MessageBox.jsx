@@ -26,7 +26,8 @@ const MessageBox = () => {
           ${selectedUser ? "hidden" : "block"}
           md:block
           w-full md:w-1/4
-          border-r border-gray-800
+          md:border-r md:border-gray-800
+          
           overflow-auto
         `}
       >
