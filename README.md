@@ -10,9 +10,11 @@ It supports real-time chat, Google OAuth login, password reset via email, and pr
 - **Google OAuth Login** (via Passport.js)
 - **Password Reset via Email** (Nodemailer + Gmail App Password)
 - **Profile Setup** for new users
+- **Filters** for specific profiles
 - **Real-Time Chat** (Socket.io)  
 - **Skill-Based Networking** – Connect with people based on skills & interests
 - **Responsive UI** with TailwindCSS
+  
 
 ---
 
