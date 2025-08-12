@@ -32,7 +32,7 @@ function Matches() {
 
   return (
     <div className=" pt-8 min-h-screen  px-4">
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto mt-10">
+      <div className="grid gap-8  md:grid-cols-2 lg:grid-cols-3 md:max-w-6xl max-w-4xl  mx-auto mt-10">
         {Array.isArray(matchedProfiles)&&matchedProfiles?.map((user, idx) => (
           <MatchedCard key={idx} {...user} />
         ))}

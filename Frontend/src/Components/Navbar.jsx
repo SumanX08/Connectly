@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Home,
   Heart,
@@ -15,46 +16,80 @@ const navItems = [
   { path: "/filters", label: "Filters", icon: <SlidersHorizontal size={20} /> },
 ];
 
+const containerVariants = {
+  hidden: { y: 100, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 70,
+      damping: 12,
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const MotionLink = motion(Link);
+
 const Navbar = () => {
   const { pathname } = useLocation();
 
   return (
-    <nav className="fixed bottom-4 border-gray-50 border left-4 right-4 bg-black rounded-lg flex justify-around items-center z-50 text-sm">
+    <motion.nav
+      className="fixed bottom-4 left-4 right-4 border border-gray-50 bg-black rounded-lg flex justify-around items-center z-50 text-sm"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {navItems.map(({ path, label, icon }) => {
         const isActive = pathname === path;
 
         return (
-          <Link
+          <div
             key={path}
-            to={path}
-            className={`flex flex-col items-center justify-center transition-all duration-300 transform px-4 py-1 rounded-xl w-full mx-1 ${
-              isActive
-                ? "bg-zinc-800 shadow-lg scale-90"
-                : "text-neutral-400 hover:text-white hover:scale-105"
-            }`}
+            className="relative flex justify-center items-center"
           >
-            <span
-              className={`text-lg mb-1 ${
-                isActive
-                  ? "text-gray-100"
-                  : ""
-              }`}
-            >
-              {icon}
-            </span>
-            <span
-              className={`text-md font-medium ${
-                isActive
-                  ? "text-gray-100"
-                  : ""
-              }`}
-            >
-              {label}
-            </span>
-          </Link>
+            {/* Active background — responsive width */}
+            {isActive && (
+              <motion.div
+                layoutId="activeBg"
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="
+                  absolute 
+                  h-full 
+                  bg-zinc-800 
+                  rounded-xl 
+                  shadow-xl 
+                 px-11 md:px-18 lg:px-24
+                "
+              />
+            )}
+
+            {/* Fixed-size clickable container */}
+            <div className="relative w-20 sm:w-24 h-14 flex justify-center items-center">
+              <motion.div
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col items-center justify-center"
+              >
+                <MotionLink
+                  to={path}
+                  className={`flex flex-col items-center justify-center w-full h-full rounded-xl ${
+                    isActive
+                      ? "text-gray-100"
+                      : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <div className="text-lg mb-1">{icon}</div>
+                  <div className="text-md font-medium">{label}</div>
+                </MotionLink>
+              </motion.div>
+            </div>
+          </div>
         );
       })}
-    </nav>
+    </motion.nav>
   );
 };
 

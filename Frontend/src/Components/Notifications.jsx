@@ -5,6 +5,7 @@ import { socket } from '../socket';
 import axios from "axios";
 import { toast } from 'sonner';
 import useAuthStore from '../../Stores/useAuthStore';
+import { motion,AnimatePresence } from 'framer-motion';
 
 const Notifications = () => {
   const [open, setOpen] = useState(false);
@@ -109,15 +110,24 @@ const Notifications = () => {
 </button>
 
 
-      {/* Modal */}
+      <AnimatePresence>
       {open && (
         <>
-          <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
-            onClick={() => setOpen(false)}
-          ></div>
+          <motion.div
+          initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.4 }}
+           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"onClick={() => setOpen(false)}>
+          </motion.div>
 
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-10">
+          <motion.div 
+          initial={{ opacity: 0, x: 1000,y:-500,scale:0.3 }}    // starting state
+      animate={{ opacity: 1, x: 0,y:0,scale:1 }}     // entering
+      exit={{ opacity: 0, x: 1000,y:-500,scale:0.3}}      // leaving
+      transition={{ease: "easeIn" , duration: 0.3 }}
+          
+          className="fixed inset-0 z-50 flex items-center justify-center px-10">
             <div
               className="relative w-full max-w-lg bg-zinc-900 rounded-xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
@@ -167,9 +177,10 @@ const Notifications = () => {
                 ))
               )}
             </div>
-          </div>
+          </motion.div>
         </>
       )}
+</AnimatePresence>
     </div>
   );
 };

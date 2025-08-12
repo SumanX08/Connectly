@@ -17,7 +17,8 @@ import ResetPassword from "./Pages/ResetPassword";
 import ForgotPassword from "./Pages/ForgotPassword";
 import OAuthSuccess from "./Pages/OAuthSuccess";
 import {Toaster} from "sonner"
-
+import PageWrapper from "./Components/PageWrapper";
+import { AnimatePresence } from "framer-motion";
 
 function App() {
   const [activePage, setActivePage] = useState("home");
@@ -49,7 +50,8 @@ const location = useLocation();
   return (
     <div className=" flex flex-col bg-black">
         <LogoBar onLogout={handleLogout} />
-        <Routes>
+        <AnimatePresence>
+        <Routes location={location} key={location.pathname}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<AuthForm />} />
           <Route path="/signup" element={<AuthForm />} />
@@ -57,13 +59,14 @@ const location = useLocation();
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/profileSetup" element={<ProtectedRoutes><ProfileSetup/></ProtectedRoutes>} />
-          <Route path="/home" element={<ProtectedRoutes><Home /></ProtectedRoutes>} />
-          <Route path="/matches" element={<ProtectedRoutes><Matches /></ProtectedRoutes>} /> 
-          <Route path="message" element={<ProtectedRoutes><MessageBox/></ProtectedRoutes>} />
-          <Route path="/profile" element={<ProtectedRoutes><Profile /></ProtectedRoutes>} />
-          <Route path="/filters" element={<ProtectedRoutes><Filters /></ProtectedRoutes>} />
+          <Route path="/home" element={<ProtectedRoutes><PageWrapper><Home /></PageWrapper></ProtectedRoutes>} />
+          <Route path="/matches" element={<ProtectedRoutes><PageWrapper><Matches /></PageWrapper></ProtectedRoutes>} /> 
+          <Route path="message" element={<ProtectedRoutes><PageWrapper><MessageBox/></PageWrapper></ProtectedRoutes>} />
+          <Route path="/profile" element={<ProtectedRoutes><PageWrapper><Profile /></PageWrapper></ProtectedRoutes>} />
+          <Route path="/filters" element={<ProtectedRoutes><PageWrapper><Filters /></PageWrapper></ProtectedRoutes>} />
          
         </Routes>
+        </AnimatePresence>
          <Toaster position="top-center" richColors closeButton theme="dark" />
    {isAuthenticated && !isLandingPage && (
         <Navbar active={activePage} onNavigate={setActivePage} />

@@ -11,8 +11,9 @@ function LogoBar() {
   const location = useLocation();
 
   const handleLogout = () => {
-    logout();
     navigate('/');
+    logout();
+    
   };
 
   const isLanding = location.pathname === '/';
@@ -37,7 +38,7 @@ function LogoBar() {
       <img
         src="../assets/l1.png"
         alt="Connectly"
-        className="w-20 h-5 object-contain text-gray-50 font-bold text-lg"
+        className="w-20 h-5 object-contain text-gray-50 font-semi text-xl"
       />
 
       {/* Right section (Notifications or empty space) */}

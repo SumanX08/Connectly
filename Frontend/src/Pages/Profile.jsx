@@ -149,10 +149,10 @@ function Profile() {
   };
 
   return (
-    <div className="min-h-screen mb-14 flex justify-center items-center text-white">
+    <div className="min-h-screen md:mb-14 flex justify-center items-center text-white">
       <form
         onSubmit={handleSave}
-        className="bg-zinc-900 border-gray-500 border-2 rounded-xl shadow-lg p-6 w-full max-w-3xl"
+        className="bg-zinc-900 md:border-gray-500 md:border-2 md:rounded-xl shadow-lg p-6 w-full max-w-3xl"
       >
         {/* Profile Picture */}
         <div className="flex flex-col items-center mb-6">
