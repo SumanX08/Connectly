@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import ProfileCard from "./ProfileCard";
 import axios from "axios";
 import { MessageCircle, User } from "lucide-react";
+import { API_URL } from "../config";
+
 
 const MatchedCard = ({ username, age, avatar, _id }) => {
   const [viewProfile, setViewProfile] = useState(false);
@@ -11,7 +13,7 @@ const MatchedCard = ({ username, age, avatar, _id }) => {
   const handleViewProfile = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:5000/api/profiles/${id}`, {
+      const res = await axios.get(`${API_URL}/api/profiles/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

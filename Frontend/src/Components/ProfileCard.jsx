@@ -2,7 +2,7 @@ import React from "react";
 
 const ProfileCard = ({profile,viewProfile}) => {
   return (
-    <div className={`relative z-10 bg-zinc-900 border-gray-500 border-2 hover:border-none bg-gradient-to-tr from-purple-600 to-blue-700  hover:p-1 rounded-2xl w-full max-w-md mx-auto shadow-lg transition-all duration-300 hover:scale-[1.015] hover:shadow-2xl mb-3`}>
+    <div className={`relative z-10 bg-zinc-900 border-gray-500 border-2 hover:border-none bg-gradient-to-tr from-purple-600 to-blue-700  hover:p-1 rounded-2xl w-full max-w-md mx-auto shadow-lg transition-all duration-300  hover:shadow-2xl `}>
   <div className="bg-zinc-900 text-white rounded-2xl py-4 px-2 ">
         
         {/* Top: Image + Name */}
@@ -10,7 +10,7 @@ const ProfileCard = ({profile,viewProfile}) => {
           <img
             src={profile.avatar}
             alt={profile.username}
-            className="w-40 h-40 rounded-full object-cover border-4 border-white mr-4"
+            className="w-40 h-40 rounded-full object-cover border-4 border-white mr-4 p-12 text-center"
           />
           <div>
             <h2 className="text-2xl font-bold">{profile.username}, <span className="font-normal text-gray-300">{profile.age}</span></h2>

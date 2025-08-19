@@ -3,6 +3,8 @@ import useAuthStore from "../../Stores/useAuthStore";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"
 import { Link } from "react-router-dom";
+import { API_URL } from "../config";
+
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,27 +18,20 @@ const AuthForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form)
     if (!isLogin && form.password !== form.confirmPassword) {
       return alert("Passwords do not match!");
     }
 
     const url = isLogin
-      ? "http://localhost:5000/api/auth/login"
-      : "http://localhost:5000/api/auth/signup";
+      ? `${API_URL}/api/auth/login`
+      : `${API_URL}/api/auth/signup`;
 
-    // Create a payload without confirmPassword
     const payload = {
       email: form.email,
       password: form.password,
     };
 
-    // If signup mode and you need username, add it conditionally
-    if (!isLogin && form.username) {
-      payload.username = form.username;
-    }
-
-    console.log(payload)
+  
     try {
       const res = await axios.post(url, payload);
       const { token, user } = res.data;
@@ -120,7 +115,7 @@ const AuthForm = () => {
           <hr className="flex-grow border-zinc-700" />
         </div>
 
-        <a href="http://localhost:5000/api/auth/google" className="w-full bg-white text-black font-semibold flex items-center justify-center py-2 rounded hover:bg-zinc-200 transition">
+        <a href= {`${API_URL}/api/auth/google`} className="w-full bg-white text-black font-semibold flex items-center justify-center py-2 rounded hover:bg-zinc-200 transition">
           <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5 mr-2" />
           Google
         </a>

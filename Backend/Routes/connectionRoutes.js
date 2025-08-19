@@ -169,10 +169,18 @@ router.get("/matches-with-last-messages/:userId", async (req, res) => {
 
         return {
           ...match.toObject(),
-          lastMessage: lastMessage?.content || "", // fallback to "" if none
+          lastMessage: lastMessage?.content || "",
+          lastMessageTime: lastMessage?.timestamp || null, // ✅ Added timestamp
         };
       })
     );
+
+    // ✅ Sort by latest message time (null values go last)
+    profilesWithLastMessages.sort((a, b) => {
+      const timeA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
+      const timeB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
+      return timeB - timeA;
+    });
 
     res.json(profilesWithLastMessages);
   } catch (err) {

@@ -19,7 +19,7 @@ function LogoBar() {
   const isLanding = location.pathname === '/';
 
   return (
-    <div className="bg-black fixed flex items-center justify-between px-4 py-2 border-b border-gray-50 w-full top-0 left-0 right-0 z-20 shadow-md ">
+    <div className="bg-black fixed flex items-center justify-between px-4 pb-2 border-b border-gray-50 w-full top-0 left-0 right-0 z-20 shadow-md ">
       {/* Left section (Logout button or empty space) */}
       <div className="w-[100px] mt-2 justify-start">
         {!isLanding && isAuthenticated ? (

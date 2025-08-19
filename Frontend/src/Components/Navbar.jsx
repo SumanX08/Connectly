@@ -37,7 +37,7 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className="fixed bottom-4 left-4 right-4 border border-gray-50 bg-black rounded-lg flex justify-around items-center z-50 text-sm"
+      className="fixed bottom-1 left-4 right-4 border border-gray-50 bg-black rounded-lg flex justify-around items-center z-50 text-sm"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -55,22 +55,14 @@ const Navbar = () => {
               <motion.div
                 layoutId="activeBg"
                 transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="
-                  absolute 
-                  h-full 
-                  bg-zinc-800 
-                  rounded-xl 
-                  shadow-xl 
-                 px-11 md:px-18 lg:px-24
-                "
+                className="absolute h-full bg-zinc-800 rounded-xl shadow-xl px-8 md:px-18 lg:px-24"
               />
             )}
 
-            {/* Fixed-size clickable container */}
-            <div className="relative w-20 sm:w-24 h-14 flex justify-center items-center">
+            <div className="relative w-2 sm:w-24 h-14 flex justify-center items-center">
               <motion.div
                 whileTap={{ scale: 0.9 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.3 }}
                 className="flex flex-col items-center justify-center"
               >
                 <MotionLink

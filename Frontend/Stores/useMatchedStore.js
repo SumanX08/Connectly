@@ -4,6 +4,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import mockProfiles from "../data/mockProfiles.js";
 import axios from "axios";
+import { API_URL } from "../src/config.js";
+
 
 const useMatchedStore = create(
   persist(
@@ -28,8 +30,9 @@ const useMatchedStore = create(
         set({ profiles: [...mockProfiles], matchedProfiles: [] }),
 
       fetchMatchedProfilesWithLastMessages: async (userId) => {
+         if (!userId) return;
         try {
-          const res = await axios.get(`http://localhost:5000/api/connections/matches-with-last-messages/${userId}`);
+          const res = await axios.get(`${API_URL}/api/connections/matches-with-last-messages/${userId}`);
           set({ matchedProfiles: res.data });
         } catch (err) {
           console.error("Failed to fetch matches with messages:", err);

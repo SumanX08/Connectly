@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import MatchedCard from '../Components/MatchedCard';
 import useMatchedStore from "../../Stores/useMatchedStore"
 import axios from 'axios';
+import { API_URL } from "../config";
+
 
 // Example matched users data
 
@@ -14,7 +16,7 @@ function Matches() {
     try {
       const fetchMatches=async()=>{
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/connections/matches", {
+      const res = await axios.get(`${API_URL}/api/connections/matches`, {
         headers: {
           Authorization: `Bearer ${token}`, // ✅ Pass token here
         }
@@ -31,8 +33,8 @@ function Matches() {
   }, [])
 
   return (
-    <div className=" pt-8 min-h-screen  px-4">
-      <div className="grid gap-8  md:grid-cols-2 lg:grid-cols-3 md:max-w-6xl max-w-4xl  mx-auto mt-10">
+    <div className=" pt-8 min-h-screen px-4">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 md:max-w-6xl max-w-4xl  mx-auto mt-10">
         {Array.isArray(matchedProfiles)&&matchedProfiles?.map((user, idx) => (
           <MatchedCard key={idx} {...user} />
         ))}

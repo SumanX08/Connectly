@@ -6,12 +6,12 @@ import { useState } from 'react'
 import useMatchedStore from "../../Stores/useMatchedStore"
 import useProfileStore from '../../Stores/useProfileStore.js'
 import axios from 'axios'
-import useAuthStore from '../../Stores/useAuthStore.js'
 import useFilterStore from '../../Stores/useFilterStore';
 import qs from 'qs';
-
 import { socket } from '../socket.js'
 import { toast } from 'sonner'
+import { API_URL } from "../config";
+
 
 function Home() {
   const [direction, setDirection] = useState(0)
@@ -58,7 +58,7 @@ function Home() {
         }
 
 
-        const res = await axios.get("http://localhost:5000/api/profiles/suggestions", {
+        const res = await axios.get(`${API_URL}/api/profiles/suggestions`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -100,7 +100,7 @@ function Home() {
       return next;
     });
 
-    console.log(direction, currentProfileIndex, isTransitioning)
+    console.log(currentProfile)
   }
   const handleConnect = async () => {
     if (isTransitioning) return
@@ -116,7 +116,7 @@ function Home() {
     })
     console.log(loggedInUserId, receiverId)
     try {
-      await axios.post("http://localhost:5000/api/connections/connect-request", {
+      await axios.post(`${API_URL}/api/connections/connect-request`, {
         senderId: loggedInUserId,
         receiverId
       });

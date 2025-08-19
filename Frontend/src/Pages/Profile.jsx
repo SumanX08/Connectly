@@ -2,11 +2,14 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import useAuthStore from "../../Stores/useAuthStore";
-import { Plus } from "lucide-react";
+import { Plus, Camera } from "lucide-react";
+import { toast } from "sonner";
+import { API_URL } from "../config";
+
 
 const initialProfile = {
   username: "",
-  age: null,
+  age: "",
   location: "",
   bio: "",
   skills: [],
@@ -26,7 +29,7 @@ function Profile() {
     const fetchProfile = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/profiles/${user._id}`,
+          `${API_URL}/api/profiles/${user._id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setProfile(res.data);
@@ -55,17 +58,16 @@ function Profile() {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
       await axios.post(
-        `http://localhost:5000/api/profiles/setup/${user._id}`,
+        `${API_URL}/api/profiles/setup/${user._id}`,
         profile,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert("Profile saved!");
+      toast.success("Profile saved!");
       navigate("/home");
     } catch (error) {
       console.error("Error saving profile:", error);
-      alert("Failed to save profile. Please try again.");
+      toast.error("Error saving profile");
     }
   };
 
@@ -75,18 +77,23 @@ function Profile() {
     setProfile((prev) => ({ ...prev, [key]: updated }));
   };
 
-  const addTag = (e, key) => {
+  const addTag = (key, value) => {
+    value = value.trim();
+    if (value && !profile[key].includes(value)) {
+      setProfile((prev) => ({ ...prev, [key]: [...prev[key], value] }));
+    }
+  };
+
+  // handle Enter
+  const handleTagInput = (e, key) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const value = e.target.value.trim();
-      if (value && !profile[key].includes(value)) {
-        setProfile((prev) => ({ ...prev, [key]: [...prev[key], value] }));
-      }
+      addTag(key, e.target.value);
       e.target.value = "";
     }
   };
 
-  // Fetch city suggestions from Nominatim (only cities)
+  // Fetch city suggestions
   const fetchCities = useCallback(async (query) => {
     if (!query.trim()) {
       setCitySuggestions([]);
@@ -104,7 +111,7 @@ function Profile() {
           featuretype: "city",
         },
         headers: {
-          "User-Agent": "SkillNetApp/1.0 (contact@yourapp.com)",
+          "User-Agent": "Connectly/1.0 (contact@connectly.com)",
         },
       });
 
@@ -129,7 +136,6 @@ function Profile() {
     }
   }, []);
 
-  // Debounce city search
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (profile.location) fetchCities(profile.location);
@@ -138,18 +144,16 @@ function Profile() {
   }, [profile.location, fetchCities]);
 
   const handleCityInput = (e) => {
-    const value = e.target.value;
-    setProfile((prev) => ({ ...prev, location: value }));
+    setProfile((prev) => ({ ...prev, location: e.target.value }));
   };
 
   const selectCity = (cityName, country) => {
-    const formatted = `${cityName}, ${country}`;
-    setProfile((prev) => ({ ...prev, location: formatted }));
+    setProfile((prev) => ({ ...prev, location: `${cityName}, ${country}` }));
     setCitySuggestions([]);
   };
 
   return (
-    <div className="min-h-screen md:mb-14 flex justify-center items-center text-white">
+    <div className="min-h-screen flex justify-center items-center text-white px-4">
       <form
         onSubmit={handleSave}
         className="bg-zinc-900 md:border-gray-500 md:border-2 md:rounded-xl shadow-lg p-6 w-full max-w-3xl"
@@ -173,19 +177,7 @@ function Profile() {
                 className="hidden"
                 onChange={handleImageChange}
               />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652l-1.688 1.687M7.5 16.5H3.75M7.5 16.5v-3.75M16.862 4.487L7.5 16.5"
-                />
-              </svg>
+              <Camera />
             </label>
           </div>
           <input
@@ -200,18 +192,17 @@ function Profile() {
         </div>
 
         {/* Age & Location */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <input
             type="number"
             name="age"
-            value={profile.age || ""}
+            value={profile.age}
             onChange={handleChange}
             className="bg-black border border-gray-600 rounded-lg px-4 py-2 text-white"
             placeholder="Age"
             min={16}
             required
           />
-
           <div className="relative">
             <input
               type="text"
@@ -252,51 +243,54 @@ function Profile() {
         />
 
         {/* Skills & Looking For */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {["skills", "lookingFor"].map((key) => (
             <div key={key}>
               <label className="block mb-2 text-lg text-gray-200 capitalize">
                 {key === "lookingFor" ? "Looking For" : "Skills"}
               </label>
-              <div>
-                <div className="flex gap-2">
-                  <input
-                    onKeyDown={(e) => addTag(e, key)}
-                    placeholder={`Add ${key === "lookingFor" ? "role" : "skill"}`}
-                    className="bg-black text-white px-4 py-2 rounded-lg border border-gray-600 w-full"
-                  />
-                  <button
-                    type="button"
-                    className="text-gray-400 hover:text-white"
-                  >
-                    <Plus />
-                  </button>
-                </div>
+              <div className="flex gap-2">
+                <input
+                  onKeyDown={(e) => handleTagInput(e, key)}
+                  placeholder={`Add ${key === "lookingFor" ? "role" : "skill"}`}
+                  className="bg-black  text-white px-4 py-2 rounded-lg border border-gray-600 w-full"
+                />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    const input = e.currentTarget.parentElement.querySelector("input");
+                    addTag(key, input.value);
+                    input.value = "";
+                  }}
+                  className=" text-white rounded-md px-2"
+                >
+                  <Plus size={18} />
+                </button>
+              </div>
 
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {profile[key].map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-black text-white px-3 py-1 rounded-full flex items-center gap-2"
+              <div className="flex flex-wrap gap-2 mt-2">
+                {profile[key].map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-black text-white px-3 py-1 rounded-full flex items-center gap-2"
+                  >
+                    <span>{item}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeItem(key, idx)}
+                      className="text-white text-xs hover:text-red-400"
                     >
-                      <span>{item}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeItem(key, idx)}
-                        className="text-white text-xs hover:text-red-400"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                      ×
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
 
         {/* Save Button */}
-        <div className="flex justify-center items-center w-1/2 mx-auto">
+        <div className="flex justify-center items-center w-full sm:w-1/2 mx-auto">
           <button
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-2 w-full"

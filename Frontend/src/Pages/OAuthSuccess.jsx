@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../Stores/useAuthStore";
+import { API_URL } from "../config";
+
 
 const OAuthSuccess = () => {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const OAuthSuccess = () => {
     }
 
     // Fetch the user profile to decide where to redirect
-    fetch("http://localhost:5000/api/auth/me", {
+    fetch(`${API_URL}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

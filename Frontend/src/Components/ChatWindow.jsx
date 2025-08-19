@@ -5,6 +5,8 @@ import { Send, ArrowLeft } from "lucide-react";
 import axios from "axios";
 import useAuthStore from "../../Stores/useAuthStore";
 import { socket } from "../socket";
+import {motion,AnimatePresence} from "framer-motion"
+import { API_URL } from "../config";
 
 const ChatWindow = ({ selectedUser, onBack }) => {
   const currentUserId = useAuthStore((state) => state.user?._id);
@@ -19,7 +21,7 @@ const ChatWindow = ({ selectedUser, onBack }) => {
       if (!selectedUser) return;
       try {
         const res = await axios.post(
-          "http://localhost:5000/api/messages/start",
+          `${API_URL}/api/messages/start`,
           { receiverId: selectedUser._id },
           {
             headers: {
@@ -33,6 +35,7 @@ const ChatWindow = ({ selectedUser, onBack }) => {
       }
     };
     startChat();
+    console.log(selectedUser)
   }, [selectedUser]);
 
   useEffect(() => {
@@ -57,7 +60,7 @@ const ChatWindow = ({ selectedUser, onBack }) => {
       if (!chatId) return;
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/messages/messages/${chatId}`,
+          `${API_URL}/api/messages/messages/${chatId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -76,7 +79,7 @@ const ChatWindow = ({ selectedUser, onBack }) => {
     if (!input.trim()) return;
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/messages/send",
+        `${API_URL}/api/messages/send`,
         {
           conversationId: chatId,
           content: input.trim(),
@@ -114,12 +117,15 @@ const ChatWindow = ({ selectedUser, onBack }) => {
   }
 
 return (
-  <div
-    className={`flex flex-col md:px-6  md:py- bg-black min-h-0 ${selectedUser ? "block" : "hidden"} md:block w-full md:w-3/4 overflow-y-scroll  scrollbar-hide 
-          
-        `}
-  >
-    {/* HEADER */}
+  <AnimatePresence mode="wait">
+
+  <motion.div 
+  key={selectedUser._id}
+  initial={{opacity:0,x:-50}}
+  animate={{opacity:1,x:0}}
+  exit={{opacity:0,x:50}}
+  transition={{duration:0.3}}
+  className="flex flex-col md:px-6 bg-black w-full md:w-3/4" >
     <div className="flex-shrink-0 flex gap-2 items-center mb-4 pb-2 border-b border-gray-800 h-16">
       <button
         onClick={onBack}
@@ -129,28 +135,28 @@ return (
       </button>
       <div className="flex items-center gap-4">
         <img
-          className="md:w-14 md:h-14 w-12 h-12 rounded-full"
+          className="md:w-14 md:h-14 w-10 h-10 rounded-full"
           src={selectedUser.avatar}
           alt=""
         />
-        <h2 className="text-gray-200 font-bold text-2xl">{selectedUser.username}</h2>
+        <h2 className="text-gray-200 font-bold text-xl md:text-2xl">{selectedUser.username}</h2>
       </div>
     </div>
 
     {/* MESSAGES (scrollable) */}
-    <div className="flex-grow flex flex-col justify-end overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
+    <div className="flex-grow flex justify-end flex-col overflow-y-auto pr-2 pb-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
       {messages.map((msg, i) => (
         <MessageBubble key={i} message={msg} />
       ))}
     </div>
 
     {/* INPUT (fixed at bottom) */}
-    <div className="flex-shrink-0 flex gap-2 p-2 border- border-gray-800 bg-black">
+    <div className="flex-shrink-0 flex gap-2 p-2 border-t border-gray-800 bg-black">
       <input
         value={input}
         type="text"
         placeholder="Write a message..."
-        className="w-full p-3 rounded bg-[#161B22] text-white border border-gray-600"
+        className="w-full p-3 rounded bg-[#121212] text-white border border-gray-600"
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleSend()}
       />
@@ -161,8 +167,10 @@ return (
         <Send size={24} className="text-gray-200" />
       </button>
     </div>
-  </div>
+  </motion.div>
+  </AnimatePresence>
 );
+
 
 
 };

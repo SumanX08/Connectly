@@ -17,10 +17,11 @@ const MessageBox = () => {
     if (userId) {
       fetchMatchedProfilesWithLastMessages(userId);
     }
+    
   }, []);
 
   return (
-    <div className="flex  min-h-screen max-h-screen py-20  bg-black text-white px-6">
+    <div className="flex  min-h-screen max-h-screen py-18  bg-black text-white px-6">
       <div
         className={`
           ${selectedUser ? "hidden" : "block"}

@@ -6,6 +6,8 @@ import axios from "axios";
 import { toast } from 'sonner';
 import useAuthStore from '../../Stores/useAuthStore';
 import { motion,AnimatePresence } from 'framer-motion';
+import { API_URL } from "../config";
+
 
 const Notifications = () => {
   const [open, setOpen] = useState(false);
@@ -29,7 +31,7 @@ const Notifications = () => {
     const fetchNotifications = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/connections/notifications", {
+        const res = await axios.get(`${API_URL}/api/connections/notifications`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -57,7 +59,7 @@ const Notifications = () => {
       const senderId = sender?._id || sender;
       const receiverId = receiver?._id || receiver || currentUser?._id;
 
-      await axios.post("http://localhost:5000/api/connections/accept", {
+      await axios.post(`${API_URL}/api/connections/accept`, {
         senderId,
         receiverId
       });
@@ -85,7 +87,7 @@ const Notifications = () => {
 
       setNotifications(prev => prev.filter(n => (n.sender?._id || n.sender) !== senderId));
 
-      await axios.post("http://localhost:5000/api/connections/reject", {
+      await axios.post(`${API_URL}/api/connections/reject`, {
         senderId,
         receiverId
       });

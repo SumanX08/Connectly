@@ -1,5 +1,6 @@
 import React from 'react'
 import { FaBolt, FaSearch, FaMobileAlt, FaGlobe, FaShieldAlt, FaBullseye } from "react-icons/fa";
+import {motion} from 'framer-motion'
 
 
 function Features() {
@@ -25,16 +26,7 @@ function Features() {
     title: "Advanced Filters",
     desc: "Filter by location, skills, project type, and collaboration goals",
   },
-  {
-    icon: <FaShieldAlt size={24} />,
-    title: "Verified Profiles",
-    desc: "All profiles are verified to ensure authentic connections and collaborations",
-  },
-  {
-    icon: <FaGlobe size={24} />,
-    title: "Global Network",
-    desc: "Connect with talented individuals from around the world or in your local area",
-  },
+  
 ];
   
     return (
@@ -46,15 +38,19 @@ function Features() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2  gap-8 max-w-6xl mx-auto">
         {features.map((feature, index) => (
-          <div key={index} className="bg-[#0e0e0e] rounded-xl p-6 shadow hover:shadow-lg transition">
+          <motion.div
+          initial={{opacity:0, y: 40}}
+          whileInView={{opacity:1,y:0}}
+          transition={{duration:0.8,delay:0.2,}}
+           key={index} className="bg-[#0e0e0e] rounded-xl p-6 shadow ">
             <div className="bg-white text-black w-10 h-10 flex items-center justify-center rounded-md mb-4">
               {feature.icon}
             </div>
             <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
             <p className="text-gray-400 text-sm">{feature.desc}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>
