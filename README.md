@@ -1,11 +1,11 @@
-# Connectly 🚀
+# Connectly 
 
 **Connectly** is a skill-based networking platform built with the **MERN stack** (MongoDB, Express, React, Node.js) that helps users connect based on skills and interests.  
 It supports real-time chat, Google OAuth login, password reset via email, and profile setup for new users.
 
 ---
 
-## ✨ Features
+##  Features
 - **JWT Authentication** (Login / Signup)
 - **Google OAuth Login** (via Passport.js)
 - **Password Reset via Email** (Nodemailer + Gmail App Password)
@@ -18,7 +18,7 @@ It supports real-time chat, Google OAuth login, password reset via email, and pr
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 ### Frontend
 - **React.js** + **Vite**
 - **Tailwind CSS**
