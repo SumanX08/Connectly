@@ -12,6 +12,24 @@ import { socket } from '../socket.js'
 import { toast } from 'sonner'
 import { API_URL } from "../config";
 
+ const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
+      scale: 0.8
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? -300 : 300,
+      opacity: 0,
+      scale: 0.8
+    })
+  };
+
 
 function Home() {
   const [direction, setDirection] = useState(0)
@@ -135,23 +153,7 @@ function Home() {
     console.log(matchedProfiles)
   }
 
-  const slideVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0,
-      scale: 0.8
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      scale: 1
-    },
-    exit: (direction) => ({
-      x: direction > 0 ? -300 : 300,
-      opacity: 0,
-      scale: 0.8
-    })
-  };
+ 
 
   const isFilterActive =
   (filters.skills && filters.skills.length > 0) ||
@@ -199,5 +201,7 @@ function Home() {
     </div>
   )
 }
+
+
 
 export default Home

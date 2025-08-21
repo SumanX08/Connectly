@@ -7,6 +7,7 @@ import { API_URL } from "../config";
 
 
 const AuthForm = () => {
+
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ email: "", password: "" });
   const { setUser } = useAuthStore();
@@ -147,5 +148,7 @@ const AuthForm = () => {
     </div>
   );
 };
+
+
 
 export default AuthForm;

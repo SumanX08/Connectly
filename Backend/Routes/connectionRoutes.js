@@ -1,28 +1,33 @@
+// Routes/connectionRoutes.js
 import express from 'express';
 import User from '../Models/User.js';
 import Message from '../Models/Message.js';
 import authMiddleware from '../Middleware/authMiddleware.js';
+
 const router = express.Router();
 
-router.post('/connect-request', async (req, res) => {
+router.post('/connect-request', authMiddleware, async (req, res) => {
   const { senderId, receiverId } = req.body;
-  
   try {
-    const receiverUser = await User.findById(receiverId)
-    const senderUser=await User.findById(senderId)
-    if (!receiverUser||!senderUser) return res.status(404).json({ error: "Receiver not found" });
+    const [receiverUser, senderUser] = await Promise.all([
+      User.findById(receiverId).select('_id username name avatar pendingRequests notifications').lean(false),
+      User.findById(senderId).select('_id username name avatar').lean(),
+    ]);
+    if (!receiverUser || !senderUser) return res.status(404).json({ error: 'User not found' });
 
-    if (receiverUser.pendingRequests.some(id => id.toString() === senderId.toString())) {
-  return res.status(400).json({ message: 'Request already sent' });
-}
+    if (receiverUser.pendingRequests.some((id) => id.toString() === String(senderId))) {
+      return res.status(400).json({ message: 'Request already sent' });
+    }
 
-    receiverUser.pendingRequests.push(senderId)
-    receiverUser.notifications.push({type:"connect",
-      sender:senderId,
-      receiver:receiverUser._id,
+    receiverUser.pendingRequests.push(senderId);
+    receiverUser.notifications.push({
+      type: 'connect',
+      sender: senderId,
+      receiver: receiverUser._id,
       username: senderUser.username,
-      avatar: senderUser.avatar,})
-  
+      avatar: senderUser.avatar,
+    });
+
     await receiverUser.save();
     res.status(201).json({ message: 'Connection request sent successfully' });
   } catch (error) {
@@ -31,130 +36,89 @@ router.post('/connect-request', async (req, res) => {
   }
 });
 
-router.post('/accept', async (req, res) => {
-  const { senderId, receiverId } = req.body;  
-
+router.post('/accept', authMiddleware, async (req, res) => {
+  const { senderId, receiverId } = req.body;
   try {
-    const senderUser = await User.findById(senderId);
-    const receiverUser = await User.findById(receiverId);
+    const [senderUser, receiverUser] = await Promise.all([
+      User.findById(senderId).select('_id matches').lean(false),
+      User.findById(receiverId).select('_id matches pendingRequests notifications').lean(false),
+    ]);
+    if (!senderUser || !receiverUser) return res.status(404).json({ message: 'One or both users not found' });
 
+    if (!senderUser.matches.includes(receiverId)) senderUser.matches.push(receiverId);
+    if (!receiverUser.matches.includes(senderId)) receiverUser.matches.push(senderId);
 
-    if (!senderUser || !receiverUser) {
-      return res.status(404).json({ message: 'One or both users not found' });
-    }
+    receiverUser.pendingRequests = receiverUser.pendingRequests.filter((id) => id.toString() !== String(senderId));
+    receiverUser.notifications = receiverUser.notifications.filter((n) => n.sender.toString() !== String(senderId));
 
-    // Avoid duplicate match entries
-    if (!senderUser.matches.includes(receiverId)) {
-      senderUser.matches.push(receiverId);
-    }
-
-    if (!receiverUser.matches.includes(senderId)) {
-      receiverUser.matches.push(senderId);
-    }
-
-    receiverUser.pendingRequests = receiverUser.pendingRequests.filter(
-      (id) => id.toString() !== senderId
-    );
-
-    receiverUser.notifications = receiverUser.notifications.filter(
-      (n) => n.sender.toString() !== senderId
-    );
-
-    await senderUser.save();
-    await receiverUser.save();
-
-    res.json({ message: "Connection accepted" });
-
-
+    await Promise.all([senderUser.save(), receiverUser.save()]);
+    res.json({ message: 'Connection accepted' });
   } catch (error) {
     console.error('Error accepting connection request:', error);
     res.status(500).json({ message: 'Internal server error' });
-  }     
+  }
 });
 
-router.post('/reject', async (req, res) => {
-  const { senderId, receiverId } = req.body;      
+router.post('/reject', authMiddleware, async (req, res) => {
+  const { senderId, receiverId } = req.body;
   try {
-      const receiverUser=await User.findById(receiverId)
+    const receiverUser = await User.findById(receiverId).select('pendingRequests notifications').lean(false);
+    if (!receiverUser) return res.status(404).json({ message: 'User not found' });
 
-      receiverUser.pendingRequests = receiverUser.pendingRequests.filter(
-      (id) => id.toString() !== senderId);
+    receiverUser.pendingRequests = receiverUser.pendingRequests.filter((id) => id.toString() !== String(senderId));
+    receiverUser.notifications = receiverUser.notifications.filter((n) => n.sender.toString() !== String(senderId));
 
-      receiverUser.notifications = receiverUser.notifications.filter(
-      (n) => n.sender.toString() !== senderId);
-    
-
+    await receiverUser.save(); // ✅ fixed
     res.status(200).json({ message: 'Connection request rejected successfully' });
   } catch (error) {
     console.error('Error rejecting connection request:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
-})
-
-router.post('/skip', async (req, res) => {
-  const { senderId, receiverId } = req.body;
-
-  try {
-    const connection = await Connections.findOneAndDelete({
-      sender: senderId,
-      receiver: receiverId,
-    });
-
-    if (!connection) {
-      return res.status(404).json({ message: 'Connection request not found' });
-    }
-
-    res.status(200).json({ message: 'Connection request skipped successfully' });
-  } catch (error) {
-    console.error('Error skipping connection request:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
 });
 
-router.get("/notifications", authMiddleware, async (req, res) => {
+router.get('/notifications', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-      .populate("pendingRequests", "username name avatar"); // ✅ add fields you need
+      .populate('pendingRequests', 'username name avatar')
+      .lean();
 
-    // Shape data so frontend always gets the same structure as socket
-    const notifications = user.pendingRequests.map(sender => ({
-      type: "connect",
-      sender: {
-        _id: sender._id,
-        name: sender.name || sender.username,
-        avatar: sender.avatar
-      },
-      receiver: req.user.id
+    const notifications = (user?.pendingRequests || []).map((sender) => ({
+      type: 'connect',
+      sender: { _id: sender._id, name: sender.name || sender.username, avatar: sender.avatar },
+      receiver: req.user.id,
     }));
 
     res.json(notifications);
   } catch (error) {
-    console.error("Error loading notifications:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Error loading notifications:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-router.get("/matches", authMiddleware, async (req, res) => {
+router.get('/matches', authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id; // Assuming token payload sets req.user
+    const userId = req.user.id;
     const user = await User.findById(userId)
-      .populate("matches", "username avatar age _id") // only fetch these fields
+      .populate('matches', 'username avatar age _id')
       .lean();
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    res.json({ matches: user.matches }); // Already populated user objects
+    res.json({ matches: user.matches || [] });
   } catch (err) {
-    console.error("Error fetching matches:", err);
-    res.status(500).json({ message: "Server error" });
+    console.error('Error fetching matches:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
-router.get("/matches-with-last-messages/:userId", async (req, res) => {
+router.get('/matches-with-last-messages/:userId', authMiddleware, async (req, res) => {
   const { userId } = req.params;
-
   try {
-    const user = await User.findById(userId).populate("matches", "-password");
+    if (String(userId) !== String(req.user.id)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const user = await User.findById(userId).populate('matches', '-password').lean(false);
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
     const profilesWithLastMessages = await Promise.all(
       user.matches.map(async (match) => {
@@ -169,13 +133,12 @@ router.get("/matches-with-last-messages/:userId", async (req, res) => {
 
         return {
           ...match.toObject(),
-          lastMessage: lastMessage?.content || "",
-          lastMessageTime: lastMessage?.timestamp || null, // ✅ Added timestamp
+          lastMessage: lastMessage?.content || '',
+          lastMessageTime: lastMessage?.timestamp || null,
         };
       })
     );
 
-    // ✅ Sort by latest message time (null values go last)
     profilesWithLastMessages.sort((a, b) => {
       const timeA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;
       const timeB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
@@ -184,12 +147,9 @@ router.get("/matches-with-last-messages/:userId", async (req, res) => {
 
     res.json(profilesWithLastMessages);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch matches and last messages" });
+    console.error('matches-with-last-messages error:', err);
+    res.status(500).json({ error: 'Failed to fetch matches and last messages' });
   }
 });
-
-
-
 
 export default router;

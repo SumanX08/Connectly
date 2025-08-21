@@ -4,8 +4,8 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router';
 
+ const Filters=React.memo(() =>{
 
-export default function Filters() {
   const {
     setSkills,
     setLocation,
@@ -145,4 +145,8 @@ export default function Filters() {
       </form>
     </div>
   );
-}
+
+  
+
+})
+export default Filters

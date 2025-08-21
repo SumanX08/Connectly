@@ -4,7 +4,7 @@ import Working from '../Components/Working'
 import Features from '../Components/Features'
 import CallToActionSection from '../Components/CallToActionSection'
 
-function LandingPage() {
+const LandingPage=()=> {
   return (
     <div>
       <HeroSection />
@@ -14,5 +14,6 @@ function LandingPage() {
     </div>
   )
 }
+
 
 export default LandingPage

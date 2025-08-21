@@ -1,8 +1,7 @@
 // socket.js
 import { Server } from "socket.io";
 import User from "./Models/User.js";
-import Conversation from "./Models/Conversation.js";
-import Message from "./Models/Message.js";
+
 
 let io;
 const connectedUsers = new Map();
@@ -10,6 +9,18 @@ const connectedUsers = new Map();
 export const initSocket = (server) => {
   io = new Server(server, {
     cors: { origin: "*" }
+  });
+
+    io.use((socket, next) => {
+    try {
+      const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+      if (!token) return next(new Error('Unauthorized'));
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      socket.userId = decoded.id;
+      next();
+    } catch (e) {
+      next(new Error('Unauthorized'));
+    }
   });
 
   io.on("connection", (socket) => {

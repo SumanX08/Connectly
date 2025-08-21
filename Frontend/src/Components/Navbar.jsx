@@ -30,7 +30,7 @@ const containerVariants = {
   },
 };
 
-const MotionLink = motion(Link);
+const MotionLink = motion.create(Link);
 
 const Navbar = () => {
   const { pathname } = useLocation();

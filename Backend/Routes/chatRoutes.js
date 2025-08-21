@@ -15,12 +15,10 @@ router.post("/start", authMiddleware, async (req, res) => {
 
     let conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] }
-    });
+    }).lean();
 
     if (!conversation) {
-      conversation = new Conversation({
-        participants: [senderId, receiverId]
-      });
+      conversation = new Conversation({participants: [senderId, receiverId]});
       await conversation.save();
     }
 
@@ -38,13 +36,7 @@ router.post("/send", authMiddleware, async (req, res) => {
   try {
     const { conversationId, content,receiverId,senderId } = req.body;
 
-    const message = new Message({
-      conversationId,
-      receiverId,
-      senderId,
-      content,
-      timestamp: new Date()
-    });
+    const message = new Message({conversationId,receiverId,senderId,content,timestamp: new Date()});
 
     await message.save();
 
@@ -69,7 +61,8 @@ router.get("/conversations", authMiddleware, async (req, res) => {
       participants: req.user.id
     })
       .populate("participants", "username email avatar")
-      .sort({ updatedAt: -1 });
+      .sort({ updatedAt: -1 })
+      .lean();
 
     res.json(conversations);
   } catch (error) {
@@ -81,17 +74,23 @@ router.get("/conversations", authMiddleware, async (req, res) => {
 /**
  * 📌 Get messages for a specific conversation
  */
-router.get("/messages/:conversationId", authMiddleware, async (req, res) => {
+router.get('/messages/:conversationId', authMiddleware, async (req, res) => {
   try {
     const { conversationId } = req.params;
+    const { before, limit = 30 } = req.query;
 
-    const messages = await Message.find({ conversationId })
-      .sort({ timestamp: 1 });
+    const q = { conversationId };
+    if (before) q.timestamp = { $lt: new Date(before) };
 
-    res.json(messages);
+    const messages = await Message.find(q).sort({ timestamp: -1 }).limit(Number(limit)).lean();
+
+    res.json({
+      messages: messages.reverse(),
+      nextCursor: messages.length ? messages[0].timestamp : null,
+    });
   } catch (error) {
-    console.error("Get messages error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error('Get messages error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

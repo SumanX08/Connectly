@@ -14,4 +14,4 @@ const PageWrapper = ({children}) => {
   )
 }
 
-export default PageWrapper
+export default React.memo(PageWrapper)

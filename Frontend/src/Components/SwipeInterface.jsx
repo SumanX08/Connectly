@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { motion,AnimatePresence } from 'framer-motion';
 import  ProfileCard  from './ProfileCard.jsx';
-import ActionButtons from './ActionButtons.jsx';// import { BottomNavigation } from './BottomNavigation'; // hidden for demo preview
+import ActionButtons from './ActionButtons.jsx';
+import AlexThompson  from "../assets/Alex Thompson.png"
+import SarahChen from "../assets/Sarah Chen.png"
+import MarcusJohnson from "../assets/Marcus Johnson.png"
 
 const profiles = [
   {
@@ -9,7 +12,7 @@ const profiles = [
     age:25,
     username: 'Alex Thompson',
     location: 'Seattle, WA',
-    avatar: 'https://avatars.unsplash.com/photo-1731951039706-0e793240bb32?...',
+    avatar: AlexThompson,
     bio: 'Product manager with 7+ years of experience launching successful digital products...',
     skills: ['Product Management', 'Agile', 'Strategy'],
     lookingFor: ['Analytics', 'UX design', 'Cloud']
@@ -18,7 +21,7 @@ const profiles = [
     _id: '2',
     username: 'Sarah Chen',
     location: 'San Francisco, CA',
-    avatar: 'https://avatars.unsplash.com/photo-1743605691943-dadce3cb4037?...',
+    avatar: SarahChen,
     bio: 'Senior UX Designer passionate about creating intuitive digital experiences...',
     skills: ['UX Design', 'Figma', 'Research'],
     lookingFor: ['Frontend Dev', 'Product Management', 'Startup']
@@ -27,32 +30,12 @@ const profiles = [
     _id: '3',
     username: 'Marcus Johnson',
     location: 'Austin, TX',
-    avatar: 'https://avatars.unsplash.com/photo-1543132220-7bc04a0e790a?...',
+    avatar: MarcusJohnson,
     bio: 'Full-stack developer with expertise in React and Node.js...',
     skills: ['React', 'Node.js', 'TypeScript'],
     lookingFor: ['Product Manager', 'Designer', 'DevOps']
   }
 ];
-
-const slideVariants = {
-  enter: (direction) => ({
-    x: direction > 0 ? -1000 : 1000,
-    opacity: 0,
-    scale: 0.8,
-  }),
-  center: {
-    zIndex: 1,
-    x: 0,
-    opacity: 1,
-    scale: 1,
-  },
-  exit: (direction) => ({
-    zIndex: 0,
-    x: direction < 0 ? -1000 : 1000,
-    opacity: 0,
-    scale: 0.8,
-  }),
-};
 
 export function SwipeInterface() {
   const [currentIndex, setCurrentIndex] = useState(0);

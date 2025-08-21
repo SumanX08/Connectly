@@ -17,7 +17,7 @@ const initialProfile = {
   image: "",
 };
 
-function Profile() {
+const Profile=React.memo(()=> {
   const [profile, setProfile] = useState(initialProfile);
   const [citySuggestions, setCitySuggestions] = useState([]);
   const [loadingCities, setLoadingCities] = useState(false);
@@ -301,6 +301,6 @@ function Profile() {
       </form>
     </div>
   );
-}
+})
 
 export default Profile;

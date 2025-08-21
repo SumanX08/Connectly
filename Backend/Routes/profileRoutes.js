@@ -13,11 +13,10 @@ const router = express.Router();
 router.get("/suggestions", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { skills = [], location, minAge, maxAge } = req.query;
+    const { skills = [], location, minAge, maxAge ,page = 1, limit = 20,} = req.query;
 
-    const currentUser = await User.findById(userId).select("matches");
+    const currentUser = await User.findById(userId).select("matches").lean();
     const excludeIds = [userId, ...currentUser.matches];
-    console.log(skills,location)
 
     const filters = {
       _id: { $nin: excludeIds },
@@ -28,7 +27,7 @@ router.get("/suggestions", authMiddleware, async (req, res) => {
     }
 
     if (location) {
-      filters.location = { $regex: new RegExp(location, "i") };
+      filters.location = { $regex: new RegExp(String(location), "i") };
     }
 
     if (minAge || maxAge) {
@@ -37,9 +36,10 @@ router.get("/suggestions", authMiddleware, async (req, res) => {
       if (maxAge) filters.age.$lte = parseInt(maxAge);
     }
 
-    console.log("MongoDB filters:", filters); // ✅ helpful log
+        const skip = (Number(page) - 1) * Number(limit);
 
-    const suggestedUsers = await User.find(filters).select("-password");
+
+    const suggestedUsers = await User.find(filters).select("-password").lean().skip(skip).limit(Number(limit));
     res.status(200).json(suggestedUsers);
   } catch (error) {
     console.error("Suggestions error:", error);
@@ -51,38 +51,55 @@ router.get("/suggestions", authMiddleware, async (req, res) => {
 
 
 // Express.js
-router.post("/setup/:id", authMiddleware,upload.single("avatar"), async (req, res) => {
-  if (!req.body) {
-        return res.status(400).json({ message: "Request body is missing" });
+router.post("/setup/:id", authMiddleware, upload.single("avatar"), async (req, res) => {
+  try {
+    console.log("📥 Incoming body:", req.body);
+    console.log("📷 Incoming file:", req.file);
+    console.log("📌 Params:", req.params);
+
+    if (!req.body) {
+      return res.status(400).json({ message: "Request body is missing" });
     }
-try {
-  
-  const { username, bio, skills,lookingFor,location } = req.body;
-  const imageUrl = req.file?.path || ""; // multer stores path
 
-  const profile = await User.findById(req.user._id);
+    const { username, bio, skills, lookingFor, location, age } = req.body;
+    const imageUrl = req.file?.path || "";
 
+    // ✅ Use req.params.id instead of req.user._id
+    const profile = await User.findById(req.params.id);
     if (!profile) {
-      console.log("❌ No user found with id:",username);
+      console.log("❌ No user found with id:", req.params.id);
       return res.status(404).json({ message: "User not found" });
     }
 
     profile.username = username;
     profile.bio = bio;
     profile.location = location;
-    profile.skills = typeof skills === "string" ? JSON.parse(skills) : skills;
-    profile.lookingFor = typeof lookingFor === "string" ? JSON.parse(lookingFor) : lookingFor;
-    if (imageUrl) {
-  profile.avatar = imageUrl;
-}
+    profile.age = age ? Number(age) : profile.age;
 
-  await profile.save();
-  res.json(profile);
-} catch (error) {
-console.error("❌ Error in profile setup:", error);
-    res.status(500).json({ message: "Something went wrong" });}
-  
+    try {
+      profile.skills = typeof skills === "string" ? JSON.parse(skills) : skills;
+    } catch {
+      profile.skills = [];
+    }
+
+    try {
+      profile.lookingFor = typeof lookingFor === "string" ? JSON.parse(lookingFor) : lookingFor;
+    } catch {
+      profile.lookingFor = [];
+    }
+
+    if (imageUrl) {
+      profile.avatar = imageUrl;
+    }
+
+    await profile.save();
+    res.json(profile);
+  } catch (error) {
+    console.error("❌ Error in profile setup:", error.message);
+    res.status(500).json({ message: error.message });
+  }
 });
+
 
 
 router.get("/:id",authMiddleware,async(req,res)=>{

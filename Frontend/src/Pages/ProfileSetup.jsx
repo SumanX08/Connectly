@@ -106,48 +106,52 @@ const ProfileSetup = () => {
     setProfile((prev) => ({ ...prev, [key]: updated }));
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const handleSave = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const formData = new FormData();
+  try {
+    const formData = new FormData();
 
-      formData.append("username", profile.username);
-      formData.append("bio", profile.bio);
-      formData.append("location", profile.location);
-      formData.append("age", profile.age);
-      formData.append("skills", JSON.stringify(profile.skills));
-      formData.append("lookingFor", JSON.stringify(profile.lookingFor));
+    formData.append("username", profile.username);
+    formData.append("bio", profile.bio);
+    formData.append("location", profile.location);
+    formData.append("age", profile.age);
+    formData.append("skills", JSON.stringify(profile.skills));
+    formData.append("lookingFor", JSON.stringify(profile.lookingFor));
 
-      if (profile.avatar) {
-        const compressedAvatar = await imageCompression(profile.avatar, {
-          maxSizeMB: 0.5,
-          maxWidthOrHeight: 512,
-          useWebWorker: true,
-        });
-        formData.append("avatar", compressedAvatar);
-      }
-
-      const res = await axios.post(
-        `${API_URL}/api/profiles/setup/${user._id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log("Profile saved:", res.data);
-      navigate("/home");
-    } catch (err) {
-      console.error("Error saving profile:", err);
-    } finally {
-      setLoading(false);
+    if (profile.avatar) {
+      const compressedAvatar = await imageCompression(profile.avatar, {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 512,
+        useWebWorker: true,
+      });
+      formData.append("avatar", compressedAvatar);
     }
-  };
+navigate("/home");
+    // ✅ Proper debug: check what's actually inside
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    const res = await axios.post(
+      `${API_URL}/api/profiles/setup/${user._id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // ❌ don't set Content-Type, axios will do it with boundary
+        },
+      }
+    );
+
+    console.log("✅ Profile saved:", res.data);
+    
+  } catch (err) {
+console.error("❌ Error saving profile:", err.response?.data || err.message);  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex justify-center items-center text-white px-4">

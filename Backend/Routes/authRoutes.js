@@ -8,12 +8,21 @@ import passport from "passport";
 
 const router = express.Router();
 
+const required = (v) => typeof v === 'string' && v.trim().length > 0;
+
 router.post('/signup', async (req, res) => {
   try {
     const { email, password } = req.body;
+     if (!required(email) || !required(password)) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const existing = await User.findOne({ email: email.toLowerCase() }).lean();
+    if (existing) return res.status(409).json({ message: 'Email already in use' });
+
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword });
+    const newUser = new User({ email, password: hashedPassword }).select('-password').lean();
     await newUser.save();
 
     // ✅ Generate token
@@ -39,7 +48,7 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "User not found" });
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
         const token = jwt.sign({ id: user._id },
@@ -130,7 +139,7 @@ router.get('/google/callback',
   }
 );
 
-router.get("/me", (req, res) => {
+router.get("/me", async(req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader)
@@ -139,11 +148,13 @@ router.get("/me", (req, res) => {
     const token = authHeader.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    User.findById(decoded.id).then((user) => {
-      if (!user) return res.status(404).json({ error: "User not found" });
+        const user = await User.findById(decoded.id).select('-password').lean();
 
-      res.json({ user });
-    });
+
+     if (!user) return res.status(404).json({ error: 'User not found' });
+
+    res.json({ user });
+    
   } catch (err) {
     console.error("Error in /me:", err);
     res.status(401).json({ error: "Invalid token" });
