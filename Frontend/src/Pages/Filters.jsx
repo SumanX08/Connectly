@@ -110,7 +110,7 @@ import { useNavigate } from 'react-router';
             value={localLocation}
             onChange={(e) => setLocalLocation(e.target.value)}
             className="border bg-black rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            placeholder="e.g. New York, Remote"
+            placeholder="Location"
           />
         </div>
 

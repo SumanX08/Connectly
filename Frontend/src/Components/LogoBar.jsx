@@ -13,22 +13,22 @@ function LogoBar() {
   const handleLogout = () => {
     navigate('/');
     logout();
-    
   };
 
-  const isLanding = location.pathname === '/';
+  // ✅ Correct check for login/signup routes
+  const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname==='/';
 
   return (
-    <div className="bg-black fixed flex items-center justify-between px-4 pb-2 border-b border-gray-50 w-full top-0 left-0 right-0 z-20 shadow-md ">
+    <div className="bg-black fixed flex items-center justify-between px-4 pb-2 border-b border-gray-50 w-full top-0 left-0 right-0 z-20 shadow-md">
       {/* Left section (Logout button or empty space) */}
       <div className="w-[100px] mt-2 justify-start">
-        {!isLanding && isAuthenticated ? (
+        {!isAuth && isAuthenticated ? (
           <button
-  onClick={handleLogout}
-  className="cursor-pointer flex items-center justify-center w-12 h-[45px] rounded-[5px] bg-[#2e2e2e] shadow-md transition-transform duration-150 active:scale-90"
->
-  <LogOut size={20} color="#f3f3f3" strokeWidth={2} />
-</button>
+            onClick={handleLogout}
+            className="cursor-pointer flex items-center justify-center w-12 h-[45px] rounded-[5px] bg-[#2e2e2e] shadow-md transition-transform duration-150 active:scale-90"
+          >
+            <LogOut size={20} color="#f3f3f3" strokeWidth={2} />
+          </button>
         ) : (
           <div className="w-12 h-[45px]" /> // placeholder for layout consistency
         )}
@@ -43,11 +43,7 @@ function LogoBar() {
 
       {/* Right section (Notifications or empty space) */}
       <div className="w-[100px] mt-2 flex justify-end">
-        {!isLanding && isAuthenticated ? (
-          <Notifications />
-        ) : (
-          <div className="w-8 h-8" /> // placeholder
-        )}
+        {isAuth && isAuthenticated ? null : <Notifications />}
       </div>
     </div>
   );

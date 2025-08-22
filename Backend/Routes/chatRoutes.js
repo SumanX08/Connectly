@@ -80,13 +80,17 @@ router.get('/messages/:conversationId', authMiddleware, async (req, res) => {
     const { before, limit = 30 } = req.query;
 
     const q = { conversationId };
-    if (before) q.timestamp = { $lt: new Date(before) };
+    if (before) q.createdAt = { $lt: new Date(before) };
 
     const messages = await Message.find(q).sort({ timestamp: -1 }).limit(Number(limit)).lean();
 
+    console.log("QUERY:", q);
+console.log("Returned", messages.length, "messages");
+
+
     res.json({
       messages: messages.reverse(),
-      nextCursor: messages.length ? messages[0].timestamp : null,
+      nextCursor: messages.length ? messages[0].createdAt : null,
     });
   } catch (error) {
     console.error('Get messages error:', error);

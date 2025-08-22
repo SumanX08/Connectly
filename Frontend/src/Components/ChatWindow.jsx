@@ -1,5 +1,5 @@
 // src/Components/ChatWindow.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import MessageBubble from "./MessageBubble";
 import { Send, ArrowLeft } from "lucide-react";
 import axios from "axios";
@@ -14,7 +14,15 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
   const [chatId, setChatId] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [nextCursor, setNextCursor] = useState(null)
+  const [loadingMore, setLoadingMore] = useState(false);
   const [input, setInput] = useState("");
+  const messagesEndRef = useRef(null);
+
+
+  useEffect(() => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+}, [messages]);
 
   useEffect(() => {
     const startChat = async () => {
@@ -39,21 +47,17 @@ const ChatWindow = ({ selectedUser, onBack }) => {
   }, [selectedUser]);
 
   useEffect(() => {
-    if (currentUserId) {
-      socket.connect();
-      socket.emit("join", currentUserId);
-    }
+ const handler = ({ message }) => {
+     if (message.conversationId === chatId) {
+       setMessages((prev) => [...prev, message]);
+     }
+   };
+   socket.on("receive-message", handler);
 
-    socket.on("receive-message", ({ message }) => {
-      if (message.conversationId === chatId) {
-        setMessages((prev) => [...prev, message]);
-      }
-    });
-
-    return () => {
-      socket.off("receive-message");
-    };
-  }, [currentUserId, chatId]);
+     return () => {
+     socket.off("receive-message", handler);
+   };
+  }, [chatId]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -67,13 +71,42 @@ const ChatWindow = ({ selectedUser, onBack }) => {
             },
           }
         );
-        setMessages(res.data);
+        setMessages(res.data.messages);
+        setNextCursor(res.data.nextCursor)
       } catch (err) {
         console.error("Failed to fetch messages:", err);
       }
     };
     fetchMessages();
   }, [chatId]);
+
+  const handleLoadMore = async () => {
+  if (!chatId || !nextCursor || loadingMore) return;
+  console.log("Fetching older messages with before:", nextCursor);
+
+  setLoadingMore(true);
+  try {
+    const res = await axios.get(
+      `${API_URL}/api/messages/messages/${chatId}?before=${nextCursor}&limit=30 `,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Got", res.data.messages.length, "messages");
+console.log("New nextCursor:", res.data.nextCursor);
+
+    setMessages((prev) => [...res.data.messages, ...prev]); // prepend older msgs
+    setNextCursor(res.data.nextCursor);
+  } catch (err) {
+    console.error("Failed to load more messages:", err);
+  } finally {
+    setLoadingMore(false);
+  }
+};
+
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -101,7 +134,6 @@ const ChatWindow = ({ selectedUser, onBack }) => {
         message: sentMessage,
       });
 
-      setMessages((prev) => [...prev, sentMessage]);
       setInput("");
     } catch (err) {
       console.error("Failed to send message:", err);
@@ -144,11 +176,23 @@ return (
     </div>
 
     {/* MESSAGES (scrollable) */}
-    <div className="flex-grow flex justify-end flex-col overflow-y-auto pr-2 pb-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-      {messages.map((msg, i) => (
-        <MessageBubble key={i} message={msg} />
-      ))}
-    </div>
+ <div
+  className="flex-grow overflow-y-auto pr-2 pb-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
+  onScroll={(e) => {
+    if (e.target.scrollTop === 0) {
+      handleLoadMore();
+    }
+  }}
+>
+  {loadingMore && (
+    <div className="text-center text-white text-xl">Loading...</div>
+  )}
+  {messages.map((msg, i) => (
+    <MessageBubble key={i} message={msg} />
+  ))}
+  {/* auto-scroll anchor */}
+  <div ref={messagesEndRef} />
+</div>
 
     {/* INPUT (fixed at bottom) */}
     <div className="flex-shrink-0 flex gap-2 p-2 border-t border-gray-800 bg-black">

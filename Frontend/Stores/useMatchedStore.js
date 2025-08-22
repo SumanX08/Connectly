@@ -6,6 +6,8 @@ import mockProfiles from "../data/mockProfiles.js";
 import axios from "axios";
 import { API_URL } from "../src/config.js";
 
+const token = localStorage.getItem("token")
+
 
 const useMatchedStore = create(
   persist(
@@ -32,7 +34,7 @@ const useMatchedStore = create(
       fetchMatchedProfilesWithLastMessages: async (userId) => {
          if (!userId) return;
         try {
-          const res = await axios.get(`${API_URL}/api/connections/matches-with-last-messages/${userId}`);
+          const res = await axios.get(`${API_URL}/api/connections/matches-with-last-messages/${userId}`,{headers:{Authorization: `Bearer ${token}`}});
           set({ matchedProfiles: res.data });
         } catch (err) {
           console.error("Failed to fetch matches with messages:", err);

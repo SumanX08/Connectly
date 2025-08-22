@@ -1,4 +1,4 @@
-import React, { useState,Suspense, lazy } from "react";
+import React, { useState,Suspense, lazy,useEffect } from "react";
 import Navbar from "./Components/Navbar";
 import LogoBar from "./Components/LogoBar";
 import Filters from "./Pages/Filters";
@@ -16,6 +16,8 @@ import OAuthSuccess from "./Pages/OAuthSuccess";
 import { Toaster } from "sonner"
 import PageWrapper from "./Components/PageWrapper";
 import { AnimatePresence } from "framer-motion";
+import { socket } from "./socket";
+
 
 const Home = lazy(() => import("./Pages/Home"));
 const Profile = lazy(() => import("./Pages/Profile"));
@@ -26,7 +28,19 @@ function App() {
   const [activePage, setActivePage] = useState("home");
   const { isAuthenticated } = useAuthStore();
   const location = useLocation();
-  const isLandingPage = location.pathname === '/';
+  const currentUserId = useAuthStore((s) => s.user?._id);
+  const isAuthPage = location.pathname === '/login' ||location.pathname ===  '/signup'|| location.pathname === '/'
+
+  useEffect(() => {
+    if (!currentUserId) return;
+    socket.connect();
+    socket.emit("join", currentUserId);
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [currentUserId]);
+
 
 
 
@@ -62,7 +76,7 @@ function App() {
         </Suspense>
       </AnimatePresence>
       <Toaster position="top-center" richColors closeButton theme="dark" />
-      {isAuthenticated && !isLandingPage && (
+      {isAuthenticated && !isAuthPage && (
         <Navbar active={activePage} onNavigate={setActivePage} />
       )}
 

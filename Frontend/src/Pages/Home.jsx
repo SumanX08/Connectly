@@ -56,12 +56,13 @@ function Home() {
     };
   }, [loggedInUserId]);
 
+  const token = localStorage.getItem("token");
+
 
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const token = localStorage.getItem("token");
-
+        
         const params = {};
 
         if (filters.skills.length > 0) {
@@ -137,7 +138,7 @@ function Home() {
       await axios.post(`${API_URL}/api/connections/connect-request`, {
         senderId: loggedInUserId,
         receiverId
-      });
+      },{ headers: { Authorization: `Bearer ${token}` }} ,);
       toast.info("Connection request sent");
     } catch (error) {
       console.error("Connect request error:", error.response?.data || error.message);

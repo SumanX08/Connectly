@@ -1,6 +1,7 @@
 // socket.js
 import { Server } from "socket.io";
 import User from "./Models/User.js";
+import jwt from "jsonwebtoken"; 
 
 
 let io;
@@ -12,13 +13,20 @@ export const initSocket = (server) => {
   });
 
     io.use((socket, next) => {
+
     try {
       const token = socket.handshake.auth?.token || socket.handshake.query?.token;
-      if (!token) return next(new Error('Unauthorized'));
+
+
+      if (!token) {
+        return next(new Error('Unauthorized'));
+
+      }
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       socket.userId = decoded.id;
       next();
     } catch (e) {
+
       next(new Error('Unauthorized'));
     }
   });
@@ -65,9 +73,13 @@ export const initSocket = (server) => {
       }
     });
 
-    socket.on("send-message", ({ senderId, receiverId, message }) => {
-      io.to(receiverId).emit("receive-message", { message });
-    });
+   socket.on("send-message", ({ senderId, receiverId, message }) => {
+  // send to receiver
+  io.to(receiverId).emit("receive-message", { message });
+
+  // also send back to sender
+  io.to(senderId).emit("receive-message", { message });
+});
 
     socket.on("disconnect", () => {
       for (let [userId, id] of connectedUsers.entries()) {

@@ -13,6 +13,8 @@ const Notifications = () => {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const currentUser = useAuthStore(state => state.user);
+  const token = localStorage.getItem("token");
+
 
   useEffect(() => {
     socket.connect();
@@ -62,7 +64,7 @@ const Notifications = () => {
       await axios.post(`${API_URL}/api/connections/accept`, {
         senderId,
         receiverId
-      });
+      },{headers:{Authorization: `Bearer ${token}`}});
 
       setNotifications(prev => prev.filter(n => (n.sender?._id || n.sender) !== senderId));
 
@@ -90,7 +92,7 @@ const Notifications = () => {
       await axios.post(`${API_URL}/api/connections/reject`, {
         senderId,
         receiverId
-      });
+      },{headers:{Authorization: `Bearer ${token}`}});
     } catch (error) {
       console.error("Error rejecting connection", error);
     }
