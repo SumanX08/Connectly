@@ -1,4 +1,3 @@
-// Routes/connectionRoutes.js
 import express from 'express';
 import User from '../Models/User.js';
 import Message from '../Models/Message.js';
@@ -68,7 +67,7 @@ router.post('/reject', authMiddleware, async (req, res) => {
     receiverUser.pendingRequests = receiverUser.pendingRequests.filter((id) => id.toString() !== String(senderId));
     receiverUser.notifications = receiverUser.notifications.filter((n) => n.sender.toString() !== String(senderId));
 
-    await receiverUser.save(); // ✅ fixed
+    await receiverUser.save(); 
     res.status(200).json({ message: 'Connection request rejected successfully' });
   } catch (error) {
     console.error('Error rejecting connection request:', error);

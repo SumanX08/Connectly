@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
   notifications: [
     {
       type: {
-        type: String, // e.g., "connect", "message"
+        type: String, 
         default: "connect"
       },
       sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

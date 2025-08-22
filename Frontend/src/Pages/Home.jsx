@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import  { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import ProfileCard from '../Components/ProfileCard'
 import ActionButtons from '../Components/ActionButtons'
@@ -82,10 +82,9 @@ function Home() {
             Authorization: `Bearer ${token}`,
           },
           params,
-          paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }), // ✅ important
+          paramsSerializer: (params) => qs.stringify(params, { arrayFormat: "repeat" }), 
         });
 
-        console.log("Fetched profiles:", res.data);
         setAllProfiles(res.data);
       } catch (error) {
         console.error("Error fetching profiles:", error);
@@ -94,7 +93,6 @@ function Home() {
 
     fetchProfiles();
   }, [filters]);
-  // ✅ refetch whenever filters change
 
 
   if (allProfiles.length === 0) {
@@ -115,11 +113,11 @@ function Home() {
 
     setCurrentProfileIndex((prev) => {
       const next = prev + 1;
-      console.log("Next profile index:", next);
+      ("Next profile index:", next);
       return next;
     });
 
-    console.log(currentProfile)
+    (currentProfile)
   }
   const handleConnect = async () => {
     if (isTransitioning) return
@@ -133,7 +131,7 @@ function Home() {
       sender: loggedInUserId,
       receiver: receiverId
     })
-    console.log(loggedInUserId, receiverId)
+    (loggedInUserId, receiverId)
     try {
       await axios.post(`${API_URL}/api/connections/connect-request`, {
         senderId: loggedInUserId,
@@ -147,11 +145,11 @@ function Home() {
 
     setCurrentProfileIndex((prev) => {
       const next = prev + 1;
-      console.log("Next profile index:", next);
+      ("Next profile index:", next);
       return next;
     });
 
-    console.log(matchedProfiles)
+    (matchedProfiles)
   }
 
  

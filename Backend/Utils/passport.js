@@ -18,7 +18,7 @@ async (accessToken, refreshToken, profile, done) => {
       email: profile.emails[0].value,
       username: profile.displayName,
       avatar: profile.photos[0].value,
-      password: "google_oauth", // won't be used
+      password: "google_oauth",
     });
 
     done(null, newUser);

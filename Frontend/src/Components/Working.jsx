@@ -1,25 +1,24 @@
-import { FaUserPlus, FaHeart, FaComments } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { UserPlus,Heart,MessagesSquare } from "lucide-react";
 
 const steps = [
   {
-    icon: <FaUserPlus size={28} />,
+    icon: <UserPlus size={28} />,
     title: "1. Create Profile",
     desc: "Set up your profile with your skills, experience, and what you're looking to build",
   },
   {
-    icon: <FaHeart size={28} />,
+    icon: <Heart size={28} />,
     title: "2. Swipe to Match",
     desc: "Browse through profiles and swipe right on people you'd like to collaborate with",
   },
   {
-    icon: <FaComments size={28} />,
+    icon: <MessagesSquare size={28} />,
     title: "3. Start Collaborating",
     desc: "Connect with your matches and start building amazing projects together",
   },
 ];
 
-// Animation variants
 const containerVariants = {
   hidden: {},
   show: {

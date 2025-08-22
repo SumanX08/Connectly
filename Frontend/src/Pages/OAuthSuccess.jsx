@@ -18,7 +18,6 @@ const OAuthSuccess = () => {
       return;
     }
 
-    // Fetch the user profile to decide where to redirect
     fetch(`${API_URL}/api/auth/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -32,10 +31,8 @@ const OAuthSuccess = () => {
           return;
         }
 
-        // Save to Zustand
         setUser(data.user, token);
 
-        // Check if the user has completed profile
         const isProfileComplete =
           data.user.username && data.user.skills?.length > 0;
 

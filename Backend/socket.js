@@ -1,4 +1,3 @@
-// socket.js
 import { Server } from "socket.io";
 import User from "./Models/User.js";
 import jwt from "jsonwebtoken"; 
@@ -55,7 +54,6 @@ export const initSocket = (server) => {
     socket.on("accept-connection", async ({ sender, receiver }) => {
       const senderSocketId = connectedUsers.get(sender);
 
-      // Fetch receiver details
       const receiverUser = await User.findById(receiver).select("username name avatar");
 
       if (senderSocketId) {
@@ -74,10 +72,8 @@ export const initSocket = (server) => {
     });
 
    socket.on("send-message", ({ senderId, receiverId, message }) => {
-  // send to receiver
   io.to(receiverId).emit("receive-message", { message });
 
-  // also send back to sender
   io.to(senderId).emit("receive-message", { message });
 });
 

@@ -75,7 +75,6 @@ export function SwipeInterface() {
         </motion.div>
       </AnimatePresence>
 
-      {/* ✅ Responsive Action Buttons */}
       <motion.div 
       initial={{opacity:0,x:50}}
       animate={{opacity:1,x:0}}

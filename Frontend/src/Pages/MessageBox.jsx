@@ -1,4 +1,3 @@
-// src/Pages/MessageBox.jsx
 
 import React, { useEffect, useState } from 'react';
 import useMatchedStore from "../../Stores/useMatchedStore.js"
@@ -13,7 +12,7 @@ const MessageBox = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    const userId = localStorage.getItem("user"); // or however you store it
+    const userId = localStorage.getItem("user"); 
     if (userId) {
       fetchMatchedProfilesWithLastMessages(userId);
     }

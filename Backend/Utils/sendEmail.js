@@ -1,16 +1,15 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables from .env
+dotenv.config(); 
 
-console.log("EMAIL_USER:", process.env.EMAIL_USER); // check these logs
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS );
+
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // From .env
-    pass: process.env.EMAIL_PASS, // App password, not your real Gmail password
+    user: process.env.EMAIL_USER, 
+    pass: process.env.EMAIL_PASS, 
   },
 });
 
@@ -29,7 +28,6 @@ export const sendResetEmail = async (to, link) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("✅ Reset email sent to", to);
   } catch (err) {
     console.error("❌ Email sending error:", err);
     throw err;

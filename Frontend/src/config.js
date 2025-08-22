@@ -1,4 +1,3 @@
-// src/config.js
 export const API_URL =
   import.meta.env.REACT_API_URL ||
   (import.meta.env.MODE === "development"

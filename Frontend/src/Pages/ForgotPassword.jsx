@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 
@@ -20,7 +20,7 @@ function ForgotPassword() {
 
       setSuccess(res.data.message);
       setEmail("");
-      console.log(res.data)
+      (res.data)
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.error || "Something went wrong");

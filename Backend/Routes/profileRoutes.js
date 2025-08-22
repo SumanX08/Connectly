@@ -9,7 +9,7 @@ const router = express.Router();
 
 
 
-// routes/profile.js
+
 router.get("/suggestions", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -50,12 +50,9 @@ router.get("/suggestions", authMiddleware, async (req, res) => {
 
 
 
-// Express.js
 router.post("/setup/:id", authMiddleware, upload.single("avatar"), async (req, res) => {
   try {
-    console.log("📥 Incoming body:", req.body);
-    console.log("📷 Incoming file:", req.file);
-    console.log("📌 Params:", req.params);
+   
 
     if (!req.body) {
       return res.status(400).json({ message: "Request body is missing" });
@@ -64,10 +61,8 @@ router.post("/setup/:id", authMiddleware, upload.single("avatar"), async (req, r
     const { username, bio, skills, lookingFor, location, age } = req.body;
     const imageUrl = req.file?.path || "";
 
-    // ✅ Use req.params.id instead of req.user._id
     const profile = await User.findById(req.params.id);
     if (!profile) {
-      console.log("❌ No user found with id:", req.params.id);
       return res.status(404).json({ message: "User not found" });
     }
 

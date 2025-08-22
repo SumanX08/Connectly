@@ -14,7 +14,6 @@ const HeroSection = () => {
     <section className="min-h-screen pt-20 lg:pt-10 pb-14 bg-black text-white flex flex-col items-center justify-center px-4 sm:px-6 lg:px-14">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center min-h-screen w-full max-w-7xl">
         
-        {/* Left side - Headline & Text */}
         <div className="space-y-6 text-center lg:text-left">
           <motion.h1
           initial={{opacity:0,x:-50}}
@@ -60,7 +59,6 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right side - Swipe Interface */}
         <div className="flex justify-center lg:justify-end w-full">
           <div className="">
             <SwipeInterface />

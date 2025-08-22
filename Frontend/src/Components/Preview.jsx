@@ -10,10 +10,8 @@ function Preview() {
           Experience how easy it is to discover collaborators, swipe through profiles, and start building your next big thing — right from your screen.
         </p>
 
-        {/* Preview Box */}
         <div className="bg-[#0e0e0e] border border-gray-800 rounded-xl p-6 shadow-lg">
           <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-            {/* Placeholder Profile Preview */}
             <div className="w-full md:w-1/2">
               <img
                 src="https://via.placeholder.com/400x300?text=Swipe+Interface+Preview"
@@ -22,7 +20,6 @@ function Preview() {
               />
             </div>
 
-            {/* Textual Description or CTA */}
             <div className="w-full md:w-1/2 text-left space-y-4">
               <h3 className="text-2xl font-semibold">Match with real collaborators</h3>
               <p className="text-gray-400">

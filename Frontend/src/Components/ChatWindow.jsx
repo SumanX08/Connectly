@@ -1,5 +1,4 @@
-// src/Components/ChatWindow.jsx
-import React, { useEffect, useState,useRef } from "react";
+import  { useEffect, useState,useRef } from "react";
 import MessageBubble from "./MessageBubble";
 import { Send, ArrowLeft } from "lucide-react";
 import axios from "axios";
@@ -43,7 +42,6 @@ const ChatWindow = ({ selectedUser, onBack }) => {
       }
     };
     startChat();
-    console.log(selectedUser)
   }, [selectedUser]);
 
   useEffect(() => {
@@ -82,7 +80,6 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
   const handleLoadMore = async () => {
   if (!chatId || !nextCursor || loadingMore) return;
-  console.log("Fetching older messages with before:", nextCursor);
 
   setLoadingMore(true);
   try {
@@ -95,10 +92,8 @@ const ChatWindow = ({ selectedUser, onBack }) => {
       }
     );
 
-    console.log("Got", res.data.messages.length, "messages");
-console.log("New nextCursor:", res.data.nextCursor);
 
-    setMessages((prev) => [...res.data.messages, ...prev]); // prepend older msgs
+    setMessages((prev) => [...res.data.messages, ...prev]);
     setNextCursor(res.data.nextCursor);
   } catch (err) {
     console.error("Failed to load more messages:", err);
@@ -175,7 +170,6 @@ return (
       </div>
     </div>
 
-    {/* MESSAGES (scrollable) */}
  <div
   className="flex-grow overflow-y-auto pr-2 pb-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
   onScroll={(e) => {
@@ -190,11 +184,9 @@ return (
   {messages.map((msg, i) => (
     <MessageBubble key={i} message={msg} />
   ))}
-  {/* auto-scroll anchor */}
   <div ref={messagesEndRef} />
 </div>
 
-    {/* INPUT (fixed at bottom) */}
     <div className="flex-shrink-0 flex gap-2 p-2 border-t border-gray-800 bg-black">
       <input
         value={input}

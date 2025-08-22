@@ -50,7 +50,6 @@ const Navbar = () => {
             key={path}
             className="relative flex justify-center items-center"
           >
-            {/* Active background — responsive width */}
             {isActive && (
               <motion.div
                 layoutId="activeBg"

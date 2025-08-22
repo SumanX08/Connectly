@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import  { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import imageCompression from "browser-image-compression";
@@ -19,8 +19,8 @@ const ProfileSetup = () => {
     bio: "",
     age: "",
     location: "",
-    skills: [],        // ✅ Start as []
-    lookingFor: [],    // ✅ Start as []
+    skills: [],        
+    lookingFor: [],   
     avatar: null,
   });
 
@@ -32,7 +32,6 @@ const ProfileSetup = () => {
     }));
   };
 
-  // Debounced fetch for cities
   const fetchCities = useCallback(async (query) => {
     if (!query.trim()) {
       setCitySuggestions([]);
@@ -129,9 +128,8 @@ const handleSave = async (e) => {
       formData.append("avatar", compressedAvatar);
     }
 navigate("/home");
-    // ✅ Proper debug: check what's actually inside
     for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
+      (`${key}:`, value);
     }
 
     const res = await axios.post(
@@ -140,12 +138,12 @@ navigate("/home");
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          // ❌ don't set Content-Type, axios will do it with boundary
         },
       }
     );
 
-    console.log("✅ Profile saved:", res.data);
+    setProfile(res.data)
+
     
   } catch (err) {
 console.error("❌ Error saving profile:", err.response?.data || err.message);  } finally {
@@ -159,7 +157,6 @@ console.error("❌ Error saving profile:", err.response?.data || err.message);  
         onSubmit={handleSave}
         className="bg-zinc-900 md:border-gray-500 md:border-2 md:rounded-xl shadow-lg p-6 w-full max-w-3xl"
       >
-        {/* Avatar & Username */}
         <div className="flex flex-col items-center mb-6">
           <div className="relative w-32 h-32 mb-4">
             <img
@@ -198,8 +195,7 @@ console.error("❌ Error saving profile:", err.response?.data || err.message);  
           />
         </div>
 
-        {/* Age & Location */}
-        <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 mb-6 relative">
+         <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 mb-6 relative">
           <input
             type="number"
             name="age"
@@ -239,7 +235,6 @@ console.error("❌ Error saving profile:", err.response?.data || err.message);  
           </div>
         </div>
 
-        {/* Bio */}
         <textarea
           name="bio"
           value={profile.bio}
@@ -249,7 +244,6 @@ console.error("❌ Error saving profile:", err.response?.data || err.message);  
           required
         />
 
-        {/* Skills & Looking For */}
         <div className="grid sm:grid-cols-2 gap-4 mb-6">
           {["skills", "lookingFor"].map((key) => (
             <div key={key}>
@@ -296,7 +290,6 @@ console.error("❌ Error saving profile:", err.response?.data || err.message);  
           ))}
         </div>
 
-        {/* Submit */}
         <div className="flex justify-center items-center w-full sm:w-1/2 mx-auto">
           <button
             type="submit"

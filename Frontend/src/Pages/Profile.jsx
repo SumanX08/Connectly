@@ -84,7 +84,6 @@ const Profile=React.memo(()=> {
     }
   };
 
-  // handle Enter
   const handleTagInput = (e, key) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -93,7 +92,6 @@ const Profile=React.memo(()=> {
     }
   };
 
-  // Fetch city suggestions
   const fetchCities = useCallback(async (query) => {
     if (!query.trim()) {
       setCitySuggestions([]);
@@ -158,7 +156,6 @@ const Profile=React.memo(()=> {
         onSubmit={handleSave}
         className="bg-zinc-900 md:border-gray-500 md:border-2 md:rounded-xl shadow-lg p-6 w-full max-w-3xl"
       >
-        {/* Profile Picture */}
         <div className="flex flex-col items-center mb-6">
           <div className="relative w-32 h-32 mb-4">
             <img
@@ -191,7 +188,6 @@ const Profile=React.memo(()=> {
           />
         </div>
 
-        {/* Age & Location */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <input
             type="number"
@@ -232,7 +228,6 @@ const Profile=React.memo(()=> {
           </div>
         </div>
 
-        {/* Bio */}
         <textarea
           name="bio"
           value={profile.bio}
@@ -242,7 +237,6 @@ const Profile=React.memo(()=> {
           required
         />
 
-        {/* Skills & Looking For */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {["skills", "lookingFor"].map((key) => (
             <div key={key}>
@@ -289,7 +283,6 @@ const Profile=React.memo(()=> {
           ))}
         </div>
 
-        {/* Save Button */}
         <div className="flex justify-center items-center w-full sm:w-1/2 mx-auto">
           <button
             type="submit"

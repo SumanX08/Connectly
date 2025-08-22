@@ -25,7 +25,6 @@ router.post('/signup', async (req, res) => {
     const newUser = new User({ email, password: hashedPassword }).select('-password').lean();
     await newUser.save();
 
-    // ✅ Generate token
     const token = jwt.sign(
       { id: newUser._id, email: newUser.email },
       process.env.JWT_SECRET,
@@ -60,13 +59,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/logout',async (req,res)=>{
-    try {
-        
-    } catch (error) {
-        
-    }
-})
+
 
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
@@ -77,13 +70,13 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(404).json({ error: 'No user found with that email' });
 
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = Date.now() + 60 * 60 * 1000; // 1 hour
+    const expires = Date.now() + 60 * 60 * 1000; 
 
     user.resetPasswordToken = token;
     user.resetPasswordExpires = expires;
     await user.save();
 
-    const resetLink = `http://localhost:5173/reset-password/${token}`; // ✅ adjust for frontend
+    const resetLink = `http://localhost:5173/reset-password/${token}`; 
 
     await sendResetEmail(email, resetLink);
 
@@ -100,7 +93,7 @@ router.post('/reset-password', async (req, res) => {
   try {
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() }, // token must not be expired
+      resetPasswordExpires: { $gt: Date.now() }, 
     });
 
     if (!user) {

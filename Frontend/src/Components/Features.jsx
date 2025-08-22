@@ -1,28 +1,27 @@
-import React from 'react'
-import { FaBolt, FaSearch, FaMobileAlt, FaGlobe, FaShieldAlt, FaBullseye } from "react-icons/fa";
 import {motion} from 'framer-motion'
+import { Goal,WandSparkles,Smartphone, UserRoundSearch  } from "lucide-react";
 
 
 function Features() {
 
   const features = [
   {
-    icon: <FaBullseye size={24} />,
+    icon: <Goal size={24} />,
     title: "Skill-Based Matching",
     desc: "Our algorithm matches you with people who have complementary skills to yours",
   },
   {
-    icon: <FaBolt size={24} />,
+    icon: <WandSparkles  size={24} />,
     title: "Real-Time Connections",
     desc: "Instant messaging and notifications keep you connected with active collaborators",
   },
   {
-    icon: <FaMobileAlt size={24} />,
+    icon: <Smartphone size={24} />,
     title: "Intuitive Swipe UI",
     desc: "Familiar swipe interface makes finding collaborators as easy as dating apps",
   },
   {
-    icon: <FaSearch size={24} />,
+    icon: < UserRoundSearch size={24} />,
     title: "Advanced Filters",
     desc: "Filter by location, skills, project type, and collaboration goals",
   },

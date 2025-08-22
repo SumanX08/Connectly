@@ -57,7 +57,7 @@ function App() {
 
       <LogoBar onLogout={handleLogout} />
       <AnimatePresence>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="bg-black">Loading...</div>}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<AuthForm />} />

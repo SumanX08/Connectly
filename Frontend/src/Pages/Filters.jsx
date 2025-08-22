@@ -43,12 +43,7 @@ import { useNavigate } from 'react-router';
   setLocation(localLocation);
   setAgeRange(localAgeRange);
 
-  // ✅ Log local values (actual submission data)
-  console.log("Submitting filters:", {
-    skills: localSkills,
-    location: localLocation,
-    ageRange: localAgeRange,
-  });
+  
 
   toast.info("Filter Applied")
   navigate("/home")
@@ -63,7 +58,6 @@ import { useNavigate } from 'react-router';
       >
         <h2 className="text-2xl font-bold text-gray-50 mb-2">Filters</h2>
 
-        {/* Skills Input */}
         <div className="flex flex-col gap-2 text-gray-50">
           <label className="font-medium">Skills</label>
           <div className="flex gap-2">
@@ -102,7 +96,6 @@ import { useNavigate } from 'react-router';
           </div>
         </div>
 
-        {/* Location */}
         <div className="flex flex-col gap-2 text-gray-50">
           <label className="font-medium">Location</label>
           <input
@@ -114,7 +107,6 @@ import { useNavigate } from 'react-router';
           />
         </div>
 
-        {/* Age Range */}
         <div className="flex flex-col gap-2 text-gray-50">
           <label className="font-medium">Age Range</label>
           <div className="flex gap-2 items-center">

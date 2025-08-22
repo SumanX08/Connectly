@@ -5,9 +5,7 @@ import authMiddleware from "../Middleware/authMiddleware.js";
 
 const router = express.Router();
 
-/**
- * 📌 Start a conversation (or return existing one)
- */
+
 router.post("/start", authMiddleware, async (req, res) => {
   try {
     const { receiverId } = req.body;
@@ -29,9 +27,7 @@ router.post("/start", authMiddleware, async (req, res) => {
   }
 });
 
-/**
- * 📌 Send a message
- */
+
 router.post("/send", authMiddleware, async (req, res) => {
   try {
     const { conversationId, content,receiverId,senderId } = req.body;
@@ -40,7 +36,6 @@ router.post("/send", authMiddleware, async (req, res) => {
 
     await message.save();
 
-    // Update conversation's last updated timestamp
     await Conversation.findByIdAndUpdate(conversationId, {
       updatedAt: new Date()
     });
@@ -52,9 +47,7 @@ router.post("/send", authMiddleware, async (req, res) => {
   }
 });
 
-/**
- * 📌 Get all conversations for logged-in user
- */
+
 router.get("/conversations", authMiddleware, async (req, res) => {
   try {
     const conversations = await Conversation.find({
@@ -71,9 +64,7 @@ router.get("/conversations", authMiddleware, async (req, res) => {
   }
 });
 
-/**
- * 📌 Get messages for a specific conversation
- */
+
 router.get('/messages/:conversationId', authMiddleware, async (req, res) => {
   try {
     const { conversationId } = req.params;
@@ -84,8 +75,7 @@ router.get('/messages/:conversationId', authMiddleware, async (req, res) => {
 
     const messages = await Message.find(q).sort({ timestamp: -1 }).limit(Number(limit)).lean();
 
-    console.log("QUERY:", q);
-console.log("Returned", messages.length, "messages");
+
 
 
     res.json({

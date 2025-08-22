@@ -15,12 +15,10 @@ function LogoBar() {
     logout();
   };
 
-  // ✅ Correct check for login/signup routes
   const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname==='/';
 
   return (
     <div className="bg-black fixed flex items-center justify-between px-4 pb-2 border-b border-gray-50 w-full top-0 left-0 right-0 z-20 shadow-md">
-      {/* Left section (Logout button or empty space) */}
       <div className="w-[100px] mt-2 justify-start">
         {!isAuth && isAuthenticated ? (
           <button
@@ -30,18 +28,16 @@ function LogoBar() {
             <LogOut size={20} color="#f3f3f3" strokeWidth={2} />
           </button>
         ) : (
-          <div className="w-12 h-[45px]" /> // placeholder for layout consistency
+          <div className="w-12 h-[45px]" /> 
         )}
       </div>
 
-      {/* Center Logo */}
       <img
         src="../assets/l1.png"
         alt="Connectly"
         className="w-20 h-5 object-contain text-gray-50 font-semi text-xl"
       />
 
-      {/* Right section (Notifications or empty space) */}
       <div className="w-[100px] mt-2 flex justify-end">
         {isAuth && isAuthenticated ? null : <Notifications />}
       </div>
