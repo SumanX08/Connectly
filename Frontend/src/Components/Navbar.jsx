@@ -58,7 +58,7 @@ const Navbar = () => {
               />
             )}
 
-            <div className="relative w-2 sm:w-24 h-14 flex justify-center items-center">
+            <div className="relative w-16 sm:w-24 h-14 flex justify-center items-center">
               <motion.div
                 whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.3 }}
