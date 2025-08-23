@@ -6,9 +6,14 @@ import jwt from "jsonwebtoken";
 let io;
 const connectedUsers = new Map();
 
-export const initSocket = (server) => {
+export const initSocket = (server,allowedOrigins) => {
   io = new Server(server, {
-    cors: { origin: "*" }
+    cors: {
+      origin: allowedOrigins,
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+    transports: ["websocket"],
   });
 
     io.use((socket, next) => {
