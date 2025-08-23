@@ -13,7 +13,7 @@ const ProfileCard = memo(({profile}) => {
           <img
             src={profile.avatar}
             alt={profile.username}
-            className="w-40 h-40 rounded-full object-cover border-4 border-white mr-4  text-center"
+            className="md:w-40 md:h-40 w-24 h-24 rounded-full object-cover border-4 border-white mr-4  text-center"
           />
           <div>
             <h2 className="text-2xl font-bold">{profile.username}, <span className="font-normal text-gray-300">{profile.age}</span></h2>
