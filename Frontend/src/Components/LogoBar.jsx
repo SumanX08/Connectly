@@ -39,7 +39,7 @@ function LogoBar() {
       />
 
       <div className="w-[100px] mt-2 flex justify-end">
-        {!isAuth && isAuthenticated ? null : <Notifications />}
+  {!isAuth && isAuthenticated ? <Notifications /> : null}
       </div>
     </div>
   );
