@@ -5,6 +5,7 @@ const URL = `${API_URL}`;
 const token = localStorage.getItem("token")
 
 export const socket = io(URL, {
+  transports: ["websocket"],
   autoConnect: false, 
   auth: {
     token,   
