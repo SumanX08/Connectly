@@ -12,13 +12,18 @@ import './Utils/passport.js'
 import session from 'express-session'
 import passport from 'passport';
 
+const allowedOrigins = [
+  "http://localhost:5173", 
+  "https://connectly-mu.vercel.app/", 
+];
 
 
 const app = express();
 const PORT = 5000; 
 
-const server=http.createServer(app)
-initSocket(server)
+const server = http.createServer(app);
+initSocket(server, allowedOrigins);
+
 
 dotenv.config();
 
@@ -27,7 +32,11 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true,
+  }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profiles', profileRoutes);
