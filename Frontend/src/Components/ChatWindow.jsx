@@ -100,18 +100,15 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
   // Send message with optimistic UI
   const handleSend = () => {
-  const messageToSend = input.trim();
-  if (!messageToSend) return;
+  if (!input.trim()) return;
 
-  // 1. Clear input immediately
+  const messageToSend = input.trim();
   setInput("");
 
-  // 2. Optimistic message
-  const tempId = Math.random().toString(36);
   setMessages((prev) => [
     ...prev,
     {
-      _id: tempId,
+      _id: Math.random().toString(36),
       senderId: currentUserId,
       receiverId: selectedUser._id,
       content: messageToSend,
@@ -119,18 +116,13 @@ const ChatWindow = ({ selectedUser, onBack }) => {
     },
   ]);
 
-  // 3. Socket emit (non-blocking)
   socket.emit("send-message", {
     senderId: currentUserId,
     receiverId: selectedUser._id,
-    content: messageToSend,
-    tempId,
+    message: messageToSend,
   });
 
-    .catch((err) => {
-      console.error("Failed to send message:", err);
-      // optionally mark message as failed
-    });
+  // axios.post(...) removed temporarily
 };
 
 
