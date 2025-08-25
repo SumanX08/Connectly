@@ -106,6 +106,12 @@ const ChatWindow = ({ selectedUser, onBack }) => {
   const handleSend = async () => {
     if (!input.trim()) return;
     try {
+      socket.emit("send-message", {
+        senderId: currentUserId,
+        receiverId: selectedUser._id,
+        message: sentMessage,
+      });
+
       const res = await axios.post(
         `${API_URL}/api/messages/send`,
         {
@@ -123,12 +129,7 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
       const sentMessage = res.data;
 
-      socket.emit("send-message", {
-        senderId: currentUserId,
-        receiverId: selectedUser._id,
-        message: sentMessage,
-      });
-
+      
       setInput("");
     } catch (err) {
       console.error("Failed to send message:", err);
