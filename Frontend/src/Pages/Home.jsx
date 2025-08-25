@@ -113,7 +113,6 @@ function Home() {
 
     setCurrentProfileIndex((prev) => {
       const next = prev + 1;
-      ("Next profile index:", next);
       return next;
     });
 
@@ -145,7 +144,6 @@ function Home() {
 
     setCurrentProfileIndex((prev) => {
       const next = prev + 1;
-      ("Next profile index:", next);
       return next;
     });
 
