@@ -1,6 +1,8 @@
 import useAuthStore from "../../Stores/useAuthStore";
+import React from "react";
 
-const MessageBubble = ({ message }) => {
+
+const MessageBubble =React.memo( ({ message }) => {
   const currentUserId = useAuthStore((state) => state.user?._id);
 
   
@@ -27,6 +29,6 @@ const MessageBubble = ({ message }) => {
       </div>
     </div>
   );
-};
+})
 
 export default MessageBubble;
