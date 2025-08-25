@@ -104,53 +104,52 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
 
 const handleSend = async () => {
-    if (!input.trim()) return;
-    try {
-      setInput("");
+  if (!input.trim()) return;
 
-      socket.emit("send-message", {
-        senderId: currentUserId,
-        receiverId: selectedUser._id,
-        message: sentMessage,
-      });
+  const messageToSend = input.trim(); 
+  setInput(""); 
 
-       setMessages((prev) => [
+  setMessages((prev) => [
     ...prev,
     {
+      _id: Math.random().toString(36), 
       senderId: currentUserId,
       receiverId: selectedUser._id,
-      content: sentMessage,
+      content: messageToSend,
       createdAt: new Date().toISOString(),
-      _id: Math.random().toString(36), 
     },
   ]);
 
-      
+  socket.emit("send-message", {
+    senderId: currentUserId,
+    receiverId: selectedUser._id,
+    message: messageToSend,
+  });
 
-      
-
-      const res = await axios.post(
-        `${API_URL}/api/messages/send`,
-        {
-          conversationId: chatId,
-          content: input.trim(),
-          receiverId: selectedUser._id,
-          senderId: currentUserId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+  axios
+    .post(
+      `${API_URL}/api/messages/send`,
+      {
+        conversationId: chatId,
+        content: messageToSend, 
+        receiverId: selectedUser._id,
+        senderId: currentUserId,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then((res) => {
       const sentMessage = res.data;
-
-      
-    } catch (err) {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === sentMessage._id ? sentMessage : msg
+        )
+      );
+    })
+    .catch((err) => {
       console.error("Failed to send message:", err);
-    }
-  };
+    });
+};
+
   
 
   if (!selectedUser) {
