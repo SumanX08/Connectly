@@ -32,20 +32,25 @@ function App() {
   const isAuthPage = location.pathname === '/login' ||location.pathname ===  '/signup'|| location.pathname === '/'
 
  useEffect(() => {
-  if (!currentUserId) return;
+    if (!currentUserId) return;
 
-  socket.connect();
+    socket.connect();
 
-  socket.on("connect", () => {
-    console.log("✅ Connected:", socket.id);
-    socket.emit("join", currentUserId);
-  });
+    socket.on("connect", () => {
+      console.log("✅ Connected:", socket.id);
+      socket.emit("join", currentUserId); // ✅ Safe here
+    });
 
-  return () => {
-    socket.off("connect");
-    socket.disconnect();
-  };
-}, [currentUserId]);
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket connect error:", err.message);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.disconnect();
+    };
+  }, [currentUserId]);
 
 
 
