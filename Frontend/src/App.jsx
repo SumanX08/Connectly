@@ -31,15 +31,21 @@ function App() {
   const currentUserId = useAuthStore((s) => s.user?._id);
   const isAuthPage = location.pathname === '/login' ||location.pathname ===  '/signup'|| location.pathname === '/'
 
-  useEffect(() => {
-    if (!currentUserId) return;
-    socket.connect();
-    socket.emit("join", currentUserId);
+useEffect(() => {
+  if (!currentUserId) return;
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [currentUserId]);
+  socket.connect();
+
+  socket.on("connect", () => {
+    console.log("✅ Connected:", socket.id);
+    socket.emit("join", currentUserId);
+  });
+
+  return () => {
+    socket.off("connect"); 
+    socket.disconnect();
+  };
+}, [currentUserId]);
 
 
 
