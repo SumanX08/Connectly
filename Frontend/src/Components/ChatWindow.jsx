@@ -100,55 +100,57 @@ const ChatWindow = ({ selectedUser, onBack }) => {
 
   // Send message with optimistic UI
   const handleSend = () => {
-    if (!input.trim()) return;
+  const messageToSend = input.trim();
+  if (!messageToSend) return;
 
-    const messageToSend = input.trim();
-    setInput("");
+  // 1. Clear input immediately
+  setInput("");
 
-    const tempId = Math.random().toString(36);
-    const optimisticMessage = {
+  // 2. Optimistic message
+  const tempId = Math.random().toString(36);
+  setMessages((prev) => [
+    ...prev,
+    {
       _id: tempId,
       senderId: currentUserId,
       receiverId: selectedUser._id,
       content: messageToSend,
       createdAt: new Date().toISOString(),
-    };
+    },
+  ]);
 
-    // Add to UI immediately
-    setMessages((prev) => [...prev, optimisticMessage]);
+  // 3. Socket emit (non-blocking)
+  socket.emit("send-message", {
+    senderId: currentUserId,
+    receiverId: selectedUser._id,
+    content: messageToSend,
+    tempId,
+  });
 
-    // Emit via socket
-    socket.emit("send-message", {
-      senderId: currentUserId,
-      receiverId: selectedUser._id,
-      content: messageToSend,
-      tempId,
+  // 4. Axios post (async, non-blocking)
+  axios
+    .post(
+      `${API_URL}/api/messages/send`,
+      {
+        conversationId: chatId,
+        content: messageToSend,
+        receiverId: selectedUser._id,
+        senderId: currentUserId,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then((res) => {
+      const sentMessage = res.data;
+      setMessages((prev) =>
+        prev.map((msg) => (msg._id === tempId ? sentMessage : msg))
+      );
+    })
+    .catch((err) => {
+      console.error("Failed to send message:", err);
+      // optionally mark message as failed
     });
+};
 
-    // Send to server asynchronously
-    axios
-      .post(
-        `${API_URL}/api/messages/send`,
-        {
-          conversationId: chatId,
-          content: messageToSend,
-          receiverId: selectedUser._id,
-          senderId: currentUserId,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        const sentMessage = res.data;
-        // Replace temp message with server message
-        setMessages((prev) =>
-          prev.map((msg) => (msg._id === tempId ? sentMessage : msg))
-        );
-      })
-      .catch((err) => {
-        console.error("Failed to send message:", err);
-        // Optional: mark message as failed
-      });
-  };
 
   if (!selectedUser) {
     return (
