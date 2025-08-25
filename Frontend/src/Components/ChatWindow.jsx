@@ -98,33 +98,66 @@ const ChatWindow = ({ selectedUser, onBack }) => {
     return () => socket.off("receive-message", handler);
   }, [chatId]);
 
-  // Send message with optimistic UI
-  const handleSend = () => {
-  if (!input.trim()) return;
+const handleSend = useCallback(() => {
+  const messageContent = input.trim();
+  if (!messageContent) return;
 
-  const messageToSend = input.trim();
+  // 1️⃣ Clear input instantly
   setInput("");
 
-  setMessages((prev) => [
-    ...prev,
-    {
-      _id: Math.random().toString(36),
-      senderId: currentUserId,
-      receiverId: selectedUser._id,
-      content: messageToSend,
-      createdAt: new Date().toISOString(),
-    },
-  ]);
+  // 2️⃣ Create optimistic message
+  const tempId = Math.random().toString(36); // temporary ID for local tracking
+  const optimisticMessage = {
+    _id: tempId,
+    senderId: currentUserId,
+    receiverId: selectedUser._id,
+    content: messageContent,
+    createdAt: new Date().toISOString(),
+    optimistic: true, // optional flag if you want to style differently
+  };
 
+  // 3️⃣ Add to local messages immediately
+  setMessages((prev) => [...prev, optimisticMessage]);
+
+  // 4️⃣ Emit socket event immediately
   socket.emit("send-message", {
     senderId: currentUserId,
     receiverId: selectedUser._id,
-    message: messageToSend,
+    content: messageContent,
+    tempId,
   });
 
-  // axios.post(...) removed temporarily
-};
+  // 5️⃣ Persist message to server asynchronously
+  axios
+    .post(
+      `${API_URL}/api/messages/send`,
+      {
+        conversationId: chatId,
+        content: messageContent,
+        receiverId: selectedUser._id,
+        senderId: currentUserId,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then((res) => {
+      const savedMessage = res.data;
 
+      setMessages((prev) =>
+        prev.map((msg) => (msg._id === tempId ? savedMessage : msg))
+      );
+    })
+    .catch((err) => {
+      console.error("Failed to send message:", err);
+
+      // Optional: mark the message as failed or remove it
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === tempId ? { ...msg, failed: true } : msg
+        )
+      );
+    });
+}, [input, chatId, currentUserId, selectedUser, token]);
+  
 
   if (!selectedUser) {
     return (
