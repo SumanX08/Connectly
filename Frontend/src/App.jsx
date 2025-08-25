@@ -21,7 +21,7 @@ import { socket } from "./socket";
 
 const Home = lazy(() => import("./Pages/Home"));
 const Profile = lazy(() => import("./Pages/Profile"));
-const Matches=lazy(() => import("./Pages/Matches"))
+const Connections=lazy(() => import("./Pages/Connections"))
 
 
 function App() {
@@ -67,7 +67,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/profileSetup" element={<ProtectedRoutes><ProfileSetup /></ProtectedRoutes>} />
           <Route path="/home" element={<ProtectedRoutes><PageWrapper><Home /></PageWrapper></ProtectedRoutes>} />
-          <Route path="/matches" element={<ProtectedRoutes><PageWrapper><Matches /></PageWrapper></ProtectedRoutes>} />
+          <Route path="/connections" element={<ProtectedRoutes><PageWrapper><Connections /></PageWrapper></ProtectedRoutes>} />
           <Route path="message" element={<ProtectedRoutes><PageWrapper><MessageBox /></PageWrapper></ProtectedRoutes>} />
           <Route path="/profile" element={<ProtectedRoutes><PageWrapper><Profile /></PageWrapper></ProtectedRoutes>} />
           <Route path="/filters" element={<ProtectedRoutes><PageWrapper><Filters /></PageWrapper></ProtectedRoutes>} />

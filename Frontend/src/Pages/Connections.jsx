@@ -5,7 +5,7 @@ import { API_URL } from "../config";
 
 const MatchedCard = lazy(() => import("../Components/MatchedCard"));
 
-function Matches() {
+function Connections() {
   const matchedProfiles = useMatchedStore((state) => state.matchedProfiles);
   const setMatchedProfiles = useMatchedStore((state) => state.setMatchedProfiles);
 
@@ -25,8 +25,8 @@ function Matches() {
   }, [setMatchedProfiles]);
 
   return (
-    <div className="pt-8 min-h-screen px-4">
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 md:max-w-6xl max-w-4xl mx-auto mt-10">
+    <div className="py-18 min-h-screen px-4">
+      <div className="grid md:gap-5  md:grid-cols-2 lg:grid-cols-3 md:max-w-6xl max-w-4xl mx-auto ">
         {Array.isArray(matchedProfiles) &&
           matchedProfiles.map((user, idx) => (
             <Suspense
@@ -53,4 +53,4 @@ function Matches() {
   );
 }
 
-export default Matches;
+export default Connections;

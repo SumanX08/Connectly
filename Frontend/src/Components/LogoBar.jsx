@@ -2,9 +2,9 @@ import React from 'react';
 import useAuthStore from '../../Stores/useAuthStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Notifications from './Notifications';
-import { LogOut } from 'lucide-react'; // ✅ Lucide icon
+import { LogOut } from 'lucide-react'; 
 
-function LogoBar() {
+const LogoBar=React.memo(()=> {
   const logout = useAuthStore((state) => state.logout);
   const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function LogoBar() {
   const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname==='/';
 
   return (
-    <div className="bg-black fixed flex items-center justify-between px-4 pb-2 border-b border-gray-50 w-full top-0 left-0 right-0 z-20 shadow-md">
+    <div className="bg-black fixed flex items-center justify-between px-4 pb-2 border-b border-gray-50/30 w-full top-0 left-0 right-0 z-20 shadow-md">
       <div className="w-[100px] mt-2 justify-start">
         {!isAuth && isAuthenticated ? (
           <button
@@ -43,6 +43,6 @@ function LogoBar() {
       </div>
     </div>
   );
-}
+})
 
 export default LogoBar;

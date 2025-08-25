@@ -56,7 +56,7 @@ export function SwipeInterface() {
   const handleSkip = () => handleSwipe(-1);
 
   return (
-    <div className="bg-black flex flex-col items-center justify-center w-[80vw] sm:w-[400px] h-[500px] rounded-2xl shadow-lg p-4">
+    <div className="bg-black flex flex-col items-center justify-center w-full mx-auto sm:w-[400px] h-[500px] rounded-2xl shadow-lg ">
       <AnimatePresence
         custom={direction}
         mode="wait"

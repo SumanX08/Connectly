@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import useAuthStore from "../../Stores/useAuthStore";
-import { Plus, Camera } from "lucide-react";
+import { Plus, Camera, X } from "lucide-react";
 import { toast } from "sonner";
 import { API_URL } from "../config";
 
@@ -21,6 +21,8 @@ const Profile=React.memo(()=> {
   const [profile, setProfile] = useState(initialProfile);
   const [citySuggestions, setCitySuggestions] = useState([]);
   const [loadingCities, setLoadingCities] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
 
   const navigate = useNavigate();
   const { user, token } = useAuthStore.getState();
@@ -93,7 +95,7 @@ const Profile=React.memo(()=> {
   };
 
   const fetchCities = useCallback(async (query) => {
-    if (!query.trim()) {
+    if (!query.trim() && profile.location==="") {
       setCitySuggestions([]);
       return;
     }
@@ -136,25 +138,27 @@ const Profile=React.memo(()=> {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (profile.location) fetchCities(profile.location);
+      if (isSearching&&profile.location) fetchCities(profile.location);
     }, 300);
     return () => clearTimeout(timeout);
-  }, [profile.location, fetchCities]);
+  }, [profile.location, fetchCities,isSearching]);
 
   const handleCityInput = (e) => {
     setProfile((prev) => ({ ...prev, location: e.target.value }));
+     setIsSearching(true);
   };
 
   const selectCity = (cityName, country) => {
     setProfile((prev) => ({ ...prev, location: `${cityName}, ${country}` }));
     setCitySuggestions([]);
+    setIsSearching(false);
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center text-white px-4">
+    <div className="min-h-screen flex justify-center items-center text-white px-4 py-20">
       <form
         onSubmit={handleSave}
-        className="bg-zinc-900 md:border-gray-500 md:border-2 md:rounded-xl shadow-lg p-6 w-full max-w-3xl"
+        className="bg-zinc-900 md:border-gray-500 md:border-2 rounded-xl shadow-lg p-6 w-full max-w-3xl"
       >
         <div className="flex flex-col items-center mb-6">
           <div className="relative w-32 h-32 mb-4">
@@ -165,7 +169,7 @@ const Profile=React.memo(()=> {
                   encodeURIComponent(profile.username || "")
               }
               alt="Profile"
-              className="w-32 h-32 object-cover rounded-full border border-gray-600"
+              className="md:w-32 md:h-32 w-28 h-28 object-cover rounded-full border border-gray-600"
             />
             <label className="absolute bottom-0 right-0 bg-black hover:bg-gray-600 text-white rounded-full p-2 cursor-pointer">
               <input
@@ -232,7 +236,7 @@ const Profile=React.memo(()=> {
           name="bio"
           value={profile.bio}
           onChange={handleChange}
-          className="bg-black border border-gray-600 rounded-lg px-4 py-2 w-full text-white mb-3"
+          className="bg-black border border-gray-600 rounded-lg p-4 w-full text-white mb-3"
           placeholder="Bio"
           required
         />
@@ -243,7 +247,7 @@ const Profile=React.memo(()=> {
               <label className="block mb-2 text-lg text-gray-200 capitalize">
                 {key === "lookingFor" ? "Looking For" : "Skills"}
               </label>
-              <div className="flex gap-2">
+              <div className="flex">
                 <input
                   onKeyDown={(e) => handleTagInput(e, key)}
                   placeholder={`Add ${key === "lookingFor" ? "role" : "skill"}`}
@@ -272,9 +276,9 @@ const Profile=React.memo(()=> {
                     <button
                       type="button"
                       onClick={() => removeItem(key, idx)}
-                      className="text-white text-xs hover:text-red-400"
+                      className="cursor-pointer text-white text-xs hover:text-red-400"
                     >
-                      ×
+                      <X size={15}/>
                     </button>
                   </div>
                 ))}

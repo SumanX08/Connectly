@@ -9,7 +9,7 @@ const steps = [
   },
   {
     icon: <Heart size={28} />,
-    title: "2. Swipe to Match",
+    title: "2. Swipe to Connect",
     desc: "Browse through profiles and swipe right on people you'd like to collaborate with",
   },
   {

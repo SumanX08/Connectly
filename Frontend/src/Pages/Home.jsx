@@ -190,7 +190,8 @@ function Home() {
             x: { type: "spring", stiffness: 300, damping: 30 },
             opacity: { duration: 0.2 },
             scale: { duration: 0.2 },
-          }}>
+          }}
+          className='w-9/10'>
           <ProfileCard profile={currentProfile} isDisabled={isTransitioning} />
         </motion.div>
 

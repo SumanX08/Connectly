@@ -47,7 +47,7 @@ const AuthForm = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <div className="bg-zinc-900 rounded-xl shadow-md w-full max-w-md p-8 text-white">
+      <div className="bg-zinc-900 rounded-xl shadow-md w-full max-w-md py-6 px-3 md:p-8 text-white">
         <h1 className="text-3xl font-medium text-center mb-5">Connectly</h1>
         <h2 className="text-2xl font-bold text-center mb-6">
           {isLogin ? "Sign in to your account" : "Create your account"}

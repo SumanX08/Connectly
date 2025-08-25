@@ -54,19 +54,20 @@ import { useNavigate } from 'react-router';
     <div className="min-h-screen flex justify-center items-center">
       <form
         onSubmit={handleSubmit}
-        className="bg-zinc-900 rounded-2xl shadow-md border border-gray-500 p-6 w-full max-w-lg flex flex-col gap-6 mx-2"
+        className="bg-zinc-900 rounded-2xl shadow-md border border-gray-500 p-6 w-full max-w-lg flex flex-col gap-4 mx-2"
       >
-        <h2 className="text-2xl font-bold text-gray-50 mb-2">Filters</h2>
+        <h2 className="text-2xl font-bold text-gray-50 ">Filters</h2>
 
         <div className="flex flex-col gap-2 text-gray-50">
-          <label className="font-medium">Skills</label>
-          <div className="flex gap-2">
+          <label className="font-semibold">Skills</label>
+          <div className="flex gap-1">
             <input
               type="text"
               value={skillInput}
               onChange={(e) => setSkillInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
               placeholder="Add skill"
-              className="bg-black text-white px-4 py-2 rounded-lg border border-2 border-gray-600 w-full"
+              className="bg-black text-white px-4 py-2 rounded-lg border  w-full"
             />
             <button
               type="button"
@@ -77,7 +78,7 @@ import { useNavigate } from 'react-router';
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 ">
             {localSkills.map((item, idx) => (
               <div
                 key={idx}
@@ -97,7 +98,7 @@ import { useNavigate } from 'react-router';
         </div>
 
         <div className="flex flex-col gap-2 text-gray-50">
-          <label className="font-medium">Location</label>
+          <label className="font-semibold">Location</label>
           <input
             type="text"
             value={localLocation}
@@ -108,7 +109,7 @@ import { useNavigate } from 'react-router';
         </div>
 
         <div className="flex flex-col gap-2 text-gray-50">
-          <label className="font-medium">Age Range</label>
+          <label className="font-semibold">Age Range</label>
           <div className="flex gap-2 items-center">
             <input
               type="number"
