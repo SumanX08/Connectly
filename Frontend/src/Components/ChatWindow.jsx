@@ -127,9 +127,6 @@ const ChatWindow = ({ selectedUser, onBack }) => {
     tempId,
   });
 
-  // 4. Axios post (async, non-blocking)
-  
-    })
     .catch((err) => {
       console.error("Failed to send message:", err);
       // optionally mark message as failed
