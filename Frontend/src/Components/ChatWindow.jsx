@@ -45,17 +45,17 @@ const ChatWindow = ({ selectedUser, onBack }) => {
   }, [selectedUser]);
 
   useEffect(() => {
- const handler = ({ message }) => {
-     if (message.conversationId === chatId) {
-       setMessages((prev) => [...prev, message]);
-     }
-   };
-   socket.on("receive-message", handler);
+  const handler = (message) => {
+    setMessages((prev) =>
+      message.conversationId === chatId ? [...prev, message] : prev
+    );
+  };
 
-     return () => {
-     socket.off("receive-message", handler);
-   };
-  }, [chatId]);
+  socket.on("receive-message", handler);
+
+  return () => socket.off("receive-message", handler);
+}, []); // <-- no dependency on chatId
+
 
   useEffect(() => {
     const fetchMessages = async () => {
