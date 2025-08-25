@@ -77,9 +77,9 @@ export const initSocket = (server,allowedOrigins) => {
     });
 
    socket.on("send-message", ({ senderId, receiverId, message }) => {
-  io.to(receiverId).emit("receive-message", { message });
+  io.to(receiverId).emit("receive-message", message );
 
-  io.to(senderId).emit("receive-message", { message });
+  io.to(senderId).emit("receive-message",  message );
 });
 
     socket.on("disconnect", () => {
