@@ -104,7 +104,6 @@ function Home() {
       return next;
     });
 
-    (currentProfile)
   }
   const handleConnect = async () => {
     if (isTransitioning) return
@@ -118,7 +117,6 @@ function Home() {
       sender: loggedInUserId,
       receiver: receiverId
     })
-    (loggedInUserId, receiverId)
     try {
       await axios.post(`${API_URL}/api/connections/connect-request`, {
         senderId: loggedInUserId,
@@ -135,7 +133,6 @@ function Home() {
       return next;
     });
 
-    (matchedProfiles)
   }
 
  
