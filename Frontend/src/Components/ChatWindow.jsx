@@ -88,9 +88,9 @@ const ChatWindow = ({ selectedUser, onBack }) => {
   useEffect(() => {
     const handler = (message) => {
       // only add message if it belongs to current chat
-      if (message.conversationId === chatId) {
+      
         setMessages((prev) => [...prev, message]);
-      }
+      
     };
 
     socket.on("receive-message", handler);
