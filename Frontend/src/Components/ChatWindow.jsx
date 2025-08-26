@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef,useCallback } from "react";
 import MessageBubble from "./MessageBubble";
 import { Send, ArrowLeft } from "lucide-react";
 import axios from "axios";
@@ -18,12 +19,10 @@ const ChatWindow = ({ selectedUser, onBack }) => {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
 
-  // Scroll to bottom instantly on new message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages]);
 
-  // Start chat when selected user changes
   useEffect(() => {
     if (!selectedUser) return;
 
@@ -41,11 +40,10 @@ const ChatWindow = ({ selectedUser, onBack }) => {
     };
 
     startChat();
-    setMessages([]); // reset messages when switching chats
+    setMessages([]); 
     setNextCursor(null);
   }, [selectedUser]);
 
-  // Fetch messages for the chat
   useEffect(() => {
     if (!chatId) return;
 
@@ -65,7 +63,6 @@ const ChatWindow = ({ selectedUser, onBack }) => {
     fetchMessages();
   }, [chatId]);
 
-  // Load older messages (pagination)
   const handleLoadMore = async () => {
     if (!chatId || !nextCursor || loadingMore) return;
 
@@ -144,6 +141,22 @@ socket.emit("send-message", {
         // Optional: mark message as failed
       });
   };
+
+  // Fully stable socket listener for real-time messages
+  useEffect(() => {
+    const handler = (message) => {
+      // only add message if it belongs to current chat
+      
+        setMessages((prev) => [...prev, message]);
+      
+    };
+
+    socket.on("receive-message", handler);
+
+    return () => socket.off("receive-message", handler);
+  }, [chatId]);
+
+
 
   if (!selectedUser) {
     return (

@@ -104,7 +104,6 @@ function Home() {
       return next;
     });
 
-    (currentProfile)
   }
   const handleConnect = async () => {
     if (isTransitioning) return
@@ -135,7 +134,6 @@ function Home() {
       return next;
     });
 
-    (matchedProfiles)
   }
 
  

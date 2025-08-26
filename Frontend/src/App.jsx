@@ -47,12 +47,32 @@ useEffect(() => {
   };
 }, [currentUserId]);
 
+useEffect(() => {
+    if (!currentUserId) return;
+
+    socket.connect();
+
+    socket.on("connect", () => {
+      socket.emit("join", currentUserId); 
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket connect error:", err.message);
+    });
+
+    return () => {
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.disconnect();
+    };
+  }, [currentUserId]);
+
+
 
 
 
 
   const handleLogout = () => {
-    // TODO: Add logout logic here
     alert("Logged out!");
   };
 
