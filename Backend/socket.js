@@ -90,9 +90,12 @@ export const initSocket = (server,allowedOrigins) => {
   };
 
   if (receiverSocketId) io.to(receiverSocketId).emit("receive-message", messagePayload);
+  if (senderSocketId) io.to(senderSocketId).emit("receive-message", messagePayload);
   
 
 
+    
+  });
     socket.on("disconnect", () => {
       for (let [userId, id] of connectedUsers.entries()) {
         if (id === socket.id) {
@@ -101,7 +104,6 @@ export const initSocket = (server,allowedOrigins) => {
         }
       }
     });
-  });
 })};
 
 export { io };
