@@ -80,16 +80,22 @@ const ChatWindow = ({ selectedUser, onBack }) => {
     }
   };
 
- useEffect(() => {
+useEffect(() => {
   const handler = (message) => {
     if (message.conversationId === chatId) {
-      setMessages((prev) => [...prev, message]);
+      setMessages((prev) => {
+        if (prev.some((m) => m._id === message._id || m.tempId === message.tempId)) {
+          return prev;
+        }
+        return [...prev, message];
+      });
     }
   };
 
   socket.on("receive-message", handler);
   return () => socket.off("receive-message", handler);
 }, [chatId]);
+
 
 
   const handleSend = () => {
