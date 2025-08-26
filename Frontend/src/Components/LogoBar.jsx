@@ -3,6 +3,8 @@ import useAuthStore from '../../Stores/useAuthStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Notifications from './Notifications';
 import { LogOut } from 'lucide-react'; 
+import logo from '../assets/logo.png'
+
 
 const LogoBar=React.memo(()=> {
   const logout = useAuthStore((state) => state.logout);
@@ -18,8 +20,8 @@ const LogoBar=React.memo(()=> {
   const isAuth = location.pathname === '/login' || location.pathname === '/signup' || location.pathname==='/';
 
   return (
-    <div className="bg-black fixed flex items-center justify-between px-4 pb-2 border-b border-gray-50/30 w-full top-0 left-0 right-0 z-20 shadow-md">
-      <div className="w-[100px] mt-2 justify-start">
+    <div className="bg-black fixed flex items-center justify-between px-4 py-2  border-b border-gray-50/30 w-full top-0 left-0 right-0 z-20 shadow-md">
+      <div className="w-[100px]  justify-start">
         {!isAuth && isAuthenticated ? (
           <button
             onClick={handleLogout}
@@ -31,14 +33,16 @@ const LogoBar=React.memo(()=> {
           <div className="w-12 h-[45px]" /> 
         )}
       </div>
-
+<div className='flex items-center gap-1'>
       <img
-        src="../assets/l1.png"
+        src={logo}
         alt="Connectly"
-        className="w-20 h-5 object-contain text-gray-50 font-semi text-xl"
+        className="w-12  h-12 object-contain text-gray-50 font-semibold text-xl"
       />
+      <p className='text-gray-50 font-semibold text-2xl'>Connectly</p>
+      </div>
 
-      <div className="w-[100px] mt-2 flex justify-end">
+      <div className="w-[100px]  flex justify-end">
   {!isAuth && isAuthenticated ? <Notifications /> : null}
       </div>
     </div>

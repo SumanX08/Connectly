@@ -42,19 +42,7 @@ function Home() {
   const { filters } = useFilterStore();
 
 
-  useEffect(() => {
-    if (!loggedInUserId) return;
 
-    socket.connect();
-
-    socket.on("connect", () => {
-      socket.emit("join", loggedInUserId);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [loggedInUserId]);
 
   const token = localStorage.getItem("token");
 
@@ -130,7 +118,7 @@ function Home() {
       sender: loggedInUserId,
       receiver: receiverId
     })
-    (loggedInUserId, receiverId)
+    
     try {
       await axios.post(`${API_URL}/api/connections/connect-request`, {
         senderId: loggedInUserId,

@@ -76,11 +76,23 @@ export const initSocket = (server,allowedOrigins) => {
       }
     });
 
-   socket.on("send-message", ({ senderId, receiverId, message }) => {
-  io.to(receiverId).emit("receive-message", { message });
+   socket.on("send-message", ({ senderId, receiverId, content, tempId, conversationId }) => {
+  const receiverSocketId = connectedUsers.get(receiverId);
+  const senderSocketId = connectedUsers.get(senderId);
 
-  io.to(senderId).emit("receive-message", { message });
+  const messagePayload = {
+    _id: tempId, 
+    senderId,
+    receiverId,
+    content,
+    createdAt: new Date().toISOString(),
+    conversationId,
+  };
+
+  if (receiverSocketId) io.to(receiverSocketId).emit("receive-message", messagePayload);
+  if (senderSocketId) io.to(senderSocketId).emit("receive-message", messagePayload);
 });
+
 
     socket.on("disconnect", () => {
       for (let [userId, id] of connectedUsers.entries()) {
