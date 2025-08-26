@@ -142,18 +142,7 @@ socket.emit("send-message", {
   };
 
   // Fully stable socket listener for real-time messages
-  useEffect(() => {
-    const handler = (message) => {
-      // only add message if it belongs to current chat
-      
-        setMessages((prev) => [...prev, message]);
-      
-    };
-
-    socket.on("receive-message", handler);
-
-    return () => socket.off("receive-message", handler);
-  }, [chatId]);
+  
 
 
 
