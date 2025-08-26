@@ -84,8 +84,13 @@ useEffect(() => {
   const handler = (message) => {
     if (message.conversationId === chatId) {
       setMessages((prev) => {
-        if (prev.some((m) => m._id === message._id || m.tempId === message.tempId)) {
+        if (message._id && prev.some(m => m._id === message._id)) {
           return prev;
+        }
+        if (message.tempId) {
+          return prev.map(m => 
+            m._id === message.tempId ? message : m
+          );
         }
         return [...prev, message];
       });
@@ -95,6 +100,7 @@ useEffect(() => {
   socket.on("receive-message", handler);
   return () => socket.off("receive-message", handler);
 }, [chatId]);
+
 
 
 
