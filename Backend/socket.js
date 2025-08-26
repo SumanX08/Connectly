@@ -90,7 +90,6 @@ export const initSocket = (server,allowedOrigins) => {
   };
 
   if (receiverSocketId) io.to(receiverSocketId).emit("receive-message", messagePayload);
-  if (senderSocketId) io.to(senderSocketId).emit("receive-message", messagePayload);
   
 
 
