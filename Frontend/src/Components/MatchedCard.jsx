@@ -33,7 +33,7 @@ const MatchedCard = ({ username, age, avatar, _id }) => {
             className="md:w-32 md:h-32 w-28 h-28 object-cover rounded-full shadow-md mb-2"
           />
           <h2 className="text-xl font-semibold text-gray-200">
-            {username}, <span className="text-gray-200 text-xl">{age}23</span>
+            {username}, <span className="text-gray-200 text-xl">{age}</span>
           </h2>
 
           <div className="flex gap-4   mt-4">
