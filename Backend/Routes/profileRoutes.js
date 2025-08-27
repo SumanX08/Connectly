@@ -69,9 +69,13 @@ router.post("/setup/:id",authMiddleware,upload.single("avatar"),
         return res.status(400).json({ message: "Username must be at least 3 characters long" });
       }
 
-      if (username.includes(" ")) {
-        return res.status(400).json({ message: "Username cannot contain spaces" });
-      }
+      if (skills?.length < 1) {
+    return toast.error("Add atleast one skill");
+  }
+
+  if (lookingFor?.length < 1) {
+    return toast.error("Add atleast one Looking For");
+  }
 
       if (!/^[a-zA-Z0-9_]+$/.test(username)) {
         return res.status(400).json({ message: "Username can only contain letters, numbers, and underscores" });
