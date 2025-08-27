@@ -22,11 +22,17 @@ const AuthForm = () => {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
+  // Basic validations
+  if (!form.email || !form.password || (!isLogin && !form.confirmPassword)) {
+    return toast.error("All fields are required!");
+  }
+  if (!/\S+@\S+\.\S+/.test(form.email)) {
+    return toast.error("Please enter a valid email address!");
+  }
   if (!isLogin) {
     if (form.password.length < 8) {
       return toast.error("Password must be at least 8 characters long!");
     }
-
     if (form.password !== form.confirmPassword) {
       return toast.error("Passwords do not match!");
     }
@@ -36,22 +42,17 @@ const handleSubmit = async (e) => {
     ? `${API_URL}/api/auth/login`
     : `${API_URL}/api/auth/signup`;
 
-  const payload = {
-    email: form.email,
-    password: form.password,
-  };
+  const payload =  { email: form.email, password: form.password }
 
   try {
     const res = await axios.post(url, payload);
     const { token, user } = res.data;
     setUser(user, token);
+
     isLogin ? navigate("/home") : navigate("/profileSetup");
   } catch (error) {
-    console.error("Auth failed:", error.response?.data?.message || error.message);
-
-    if (!isLogin && error.response?.data?.message?.includes("Email already exists")) {
-      toast.error("This email is already registered. Please login instead.");
-    }
+    console.error("Auth failed:", error.response?.data || error.message);
+    toast.error(error.response?.data?.message || "Authentication failed. Please try again.");
   }
 };
 
