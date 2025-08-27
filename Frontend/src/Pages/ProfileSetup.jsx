@@ -114,9 +114,6 @@ const handleSave = async (e) => {
     return toast.error("Username must be at least 3 characters long");
   }
 
-  if (profile.username.includes(" ")) {
-    return toast.error("Username cannot contain spaces");
-  }
 
   if (!/^[a-zA-Z0-9_]+$/.test(profile.username)) {
     return toast.error("Username can only contain letters, numbers, and underscores");
