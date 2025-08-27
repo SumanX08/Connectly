@@ -13,17 +13,27 @@ const required = (v) => typeof v === 'string' && v.trim().length > 0;
 router.post('/signup', async (req, res) => {
   try {
     const { email, password } = req.body;
-     if (!required(email) || !required(password)) {
+
+    if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
     const existing = await User.findOne({ email: email.toLowerCase() }).lean();
-    if (existing) return res.status(409).json({ message: 'Email already in use' });
-
+    if (existing) {
+      return res.status(409).json({ message: 'Email already in use' });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email, password: hashedPassword }).select('-password').lean();
+
+    const newUser = new User({
+      email: email.toLowerCase(),
+      password: hashedPassword,
+    });
+
     await newUser.save();
+
+    const userObj = newUser.toObject();
+    delete userObj.password;
 
     const token = jwt.sign(
       { id: newUser._id, email: newUser.email },
@@ -31,14 +41,17 @@ router.post('/signup', async (req, res) => {
       { expiresIn: "7d" }
     );
 
-res.status(201).json({
-  token,
-  user: newUser,
-});  } catch (error) {
-    console.error(error)
+    res.status(201).json({
+      token,
+      user: userObj,
+    });
+
+  } catch (error) {
+    console.error("❌ Signup error:", error);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 
 router.post('/login', async (req, res) => {
