@@ -57,15 +57,39 @@ const Profile=React.memo(()=> {
     }
   };
 
-  const handleSave = async (e) => {
+   const handleSave = async (e) => {
     e.preventDefault();
+    if (!profile.username || profile.username.trim().length < 3) {
+    return toast.error("Username must be at least 3 characters long");
+  }
+
+
+  if (!/^[a-zA-Z0-9_]+$/.test(profile.username)) {
+    return toast.error("Username can only contain letters, numbers, and underscores");
+  }
+
+  if (profile.age && (isNaN(profile.age) || profile.age < 13 || profile.age > 120)) {
+    return toast.error("Please enter a valid age between 13 and 120");
+  }
+
+  if (profile.bio && profile.bio.length > 200) {
+    return toast.error("Bio cannot exceed 200 characters");
+  }
+
+  if (profile.skills?.length < 1) {
+    return toast.error("Add atleast one skill");
+  }
+
+  if (profile.lookingFor?.length < 1) {
+    return toast.error("Add atleast one Looking For");
+  }
     try {
       await axios.post(
         `${API_URL}/api/profiles/setup/${user._id}`,
         profile,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      toast.success("Profile saved!");
+      toast.success("Profile updated successfully!");
       navigate("/home");
     } catch (error) {
       console.error("Error saving profile:", error);
