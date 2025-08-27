@@ -137,11 +137,11 @@ const handleSave = async (e) => {
   try {
     const formData = new FormData();
     formData.append("username", profile.username.trim());
-    formData.append("bio", profile.bio);
-    formData.append("location", profile.location);
-    formData.append("age", profile.age);
-    formData.append("skills", JSON.stringify(profile.skills));
-    formData.append("lookingFor", JSON.stringify(profile.lookingFor));
+    formData.append("bio", profile.bio || "");
+    formData.append("location", profile.location || "");
+    formData.append("age", profile.age || "");
+    formData.append("skills", JSON.stringify(profile.skills || []));
+    formData.append("lookingFor", JSON.stringify(profile.lookingFor || []));
 
     if (profile.avatar) {
       const compressedAvatar = await imageCompression(profile.avatar, {
@@ -161,16 +161,25 @@ const handleSave = async (e) => {
     );
 
     setProfile(res.data);
-    toast.success("Profile updated successfully!");
-    navigate("/home");
+    toast.success("Profile updated successfully! ");
+    
+    navigate("/home");  
+
   } catch (err) {
     const msg = err.response?.data?.message || "Failed to save profile";
-    toast.error(msg); 
+
+    if (msg.toLowerCase().includes("username")) {
+      toast.error("This username is already taken. Please choose another.");
+    } else {
+      toast.error(msg);
+    }
+
     console.error("❌ Error saving profile:", msg);
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (
