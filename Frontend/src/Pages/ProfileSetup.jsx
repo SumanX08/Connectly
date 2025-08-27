@@ -127,8 +127,12 @@ const handleSave = async (e) => {
     return toast.error("Bio cannot exceed 200 characters");
   }
 
-  if (profile.skills?.length > 10) {
-    return toast.error("You can only add up to 10 skills");
+  if (profile.skills?.length < 1) {
+    return toast.error("Add atleast one skill");
+  }
+
+  if (profile.lookingFor?.length < 1) {
+    return toast.error("Add atleast one Looking For");
   }
 
   setLoading(true);
