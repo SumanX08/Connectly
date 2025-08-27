@@ -144,7 +144,7 @@ router.get('/google/callback',
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.redirect(`${frontendURL}${token}`);
+    res.redirect(`${frontendURL}/oauth-success?token=${token}`);
     
   }
 );
