@@ -7,6 +7,8 @@ import { sendResetEmail } from '../Utils/sendEmail.js';
 import passport from "passport";
 
 const router = express.Router();
+const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
+
 
 const required = (v) => typeof v === 'string' && v.trim().length > 0;
 
@@ -89,7 +91,9 @@ router.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = expires;
     await user.save();
 
-    const resetLink = `http://localhost:5173/reset-password/${token}`; 
+        
+
+    const resetLink = `${frontendURL}/${token}`; 
 
     await sendResetEmail(email, resetLink);
 
@@ -140,7 +144,7 @@ router.get('/google/callback',
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.redirect(`http://localhost:5173/oauth-success?token=${token}`);
+    res.redirect(`${frontendURL}${token}`);
     
   }
 );
