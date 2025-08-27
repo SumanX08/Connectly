@@ -5,6 +5,8 @@ import imageCompression from "browser-image-compression";
 import useAuthStore from "../../Stores/useAuthStore";
 import { Plus, Camera } from "lucide-react";
 import { API_URL } from "../config";
+import { toast } from "sonner";
+
 
 
 const ProfileSetup = () => {
