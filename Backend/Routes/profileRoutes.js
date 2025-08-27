@@ -50,61 +50,86 @@ router.get("/suggestions", authMiddleware, async (req, res) => {
 
 
 
-router.post("/setup/:id", authMiddleware, upload.single("avatar"), async (req, res) => {
-  try {
-   
-
-    if (!req.body) {
-      return res.status(400).json({ message: "Request body is missing" });
-    }
-
-    const { username, bio, skills, lookingFor, location, age } = req.body;
-    const imageUrl = req.file?.path || "";
-
-    const profile = await User.findById(req.params.id);
-    if (!profile) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (username) {
-        const existingUser = await User.findOne({
-          username: username,
-          _id: { $ne: req.params.id }, // exclude current user
-        });
-        if (existingUser) {
-          return res.status(400).json({ message: "Username already exists" });
-        }
+router.post("/setup/:id",authMiddleware,upload.single("avatar"),
+  async (req, res) => {
+    try {
+      if (!req.body) {
+        return res.status(400).json({ message: "Request body is missing" });
       }
-    
-    profile.username = username;
-    profile.bio = bio;
-    profile.location = location;
-    profile.age = age ? Number(age) : profile.age;
 
-    try {
-      profile.skills = typeof skills === "string" ? JSON.parse(skills) : skills;
-    } catch {
-      profile.skills = [];
+      const { username, bio, skills, lookingFor, location, age } = req.body;
+      const imageUrl = req.file?.path || "";
+
+      const profile = await User.findById(req.params.id);
+      if (!profile) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (!username || username.trim().length < 3) {
+        return res.status(400).json({ message: "Username must be at least 3 characters long" });
+      }
+
+      if (username.includes(" ")) {
+        return res.status(400).json({ message: "Username cannot contain spaces" });
+      }
+
+      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+        return res.status(400).json({ message: "Username can only contain letters, numbers, and underscores" });
+      }
+
+      const existingUser = await User.findOne({
+        username: username.trim(),
+        _id: { $ne: req.params.id },
+      });
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+
+      if (age && (isNaN(age) || age < 16)) {
+        return res.status(400).json({ message: "Minimum age is 16" });
+      }
+
+      if (bio && bio.length > 200) {
+        return res.status(400).json({ message: "Bio cannot exceed 200 characters" });
+      }
+
+      let parsedSkills = [];
+      try {
+        parsedSkills = typeof skills === "string" ? JSON.parse(skills) : skills;
+      } catch {
+        parsedSkills = [];
+      }
+      if (parsedSkills.length > 10) {
+        return res.status(400).json({ message: "You can only add up to 10 skills" });
+      }
+
+      let parsedLookingFor = [];
+      try {
+        parsedLookingFor =
+          typeof lookingFor === "string" ? JSON.parse(lookingFor) : lookingFor;
+      } catch {
+        parsedLookingFor = [];
+      }
+
+      profile.username = username.trim();
+      profile.bio = bio || "";
+      profile.location = location || "";
+      profile.age = age ? Number(age) : profile.age;
+      profile.skills = parsedSkills;
+      profile.lookingFor = parsedLookingFor;
+
+      if (imageUrl) {
+        profile.avatar = imageUrl;
+      }
+
+      await profile.save();
+      res.json(profile);
+    } catch (error) {
+      console.error("❌ Error in profile setup:", error.message);
+      res.status(500).json({ message: error.message });
     }
-
-    try {
-      profile.lookingFor = typeof lookingFor === "string" ? JSON.parse(lookingFor) : lookingFor;
-    } catch {
-      profile.lookingFor = [];
-    }
-
-    if (imageUrl) {
-      profile.avatar = imageUrl;
-    }
-
-    await profile.save();
-    res.json(profile);
-  } catch (error) {
-    console.error("❌ Error in profile setup:", error.message);
-    res.status(500).json({ message: error.message });
   }
-});
-
+);
 
 
 router.get("/:id",authMiddleware,async(req,res)=>{
