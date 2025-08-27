@@ -66,6 +66,16 @@ router.post("/setup/:id", authMiddleware, upload.single("avatar"), async (req, r
       return res.status(404).json({ message: "User not found" });
     }
 
+    if (username) {
+        const existingUser = await User.findOne({
+          username: username,
+          _id: { $ne: req.params.id }, // exclude current user
+        });
+        if (existingUser) {
+          return res.status(400).json({ message: "Username already exists" });
+        }
+      }
+    
     profile.username = username;
     profile.bio = bio;
     profile.location = location;
