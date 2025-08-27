@@ -22,7 +22,6 @@ const AuthForm = () => {
 const handleSubmit = async (e) => {
   e.preventDefault();
 
-  // Basic validations
   if (!form.email || !form.password || (!isLogin && !form.confirmPassword)) {
     return toast.error("All fields are required!");
   }
@@ -42,19 +41,32 @@ const handleSubmit = async (e) => {
     ? `${API_URL}/api/auth/login`
     : `${API_URL}/api/auth/signup`;
 
-  const payload =  { email: form.email, password: form.password }
+  const payload = { 
+    email: form.email, 
+    password: form.password,
+    ...( !isLogin && { confirmPassword: form.confirmPassword })
+  };
 
   try {
-    const res = await axios.post(url, payload);
-    const { token, user } = res.data;
-    setUser(user, token);
-
-    isLogin ? navigate("/home") : navigate("/profileSetup");
-  } catch (error) {
-    console.error("Auth failed:", error.response?.data || error.message);
-    toast.error(error.response?.data?.message || "Authentication failed. Please try again.");
+    await toast.promise(
+      axios.post(url, payload),
+      {
+        loading: isLogin ? "Signing you in..." : "Creating your account...",
+        success: (res) => {
+          const { token, user } = res.data;
+          setUser(user, token);
+          isLogin ? navigate("/home") : navigate("/profileSetup");
+          return isLogin ? "Welcome back " : "Account created ";
+        },
+        error: (err) =>
+          err.response?.data?.message || "Authentication failed. Please try again."
+      }
+    );
+  } catch (err) {
+    console.error("Auth failed:", err);
   }
 };
+
 
 
 
