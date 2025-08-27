@@ -107,12 +107,36 @@ const ProfileSetup = () => {
 
 const handleSave = async (e) => {
   e.preventDefault();
+
+  if (!profile.username || profile.username.trim().length < 3) {
+    return toast.error("Username must be at least 3 characters long");
+  }
+
+  if (profile.username.includes(" ")) {
+    return toast.error("Username cannot contain spaces");
+  }
+
+  if (!/^[a-zA-Z0-9_]+$/.test(profile.username)) {
+    return toast.error("Username can only contain letters, numbers, and underscores");
+  }
+
+  if (profile.age && (isNaN(profile.age) || profile.age < 13 || profile.age > 120)) {
+    return toast.error("Please enter a valid age between 13 and 120");
+  }
+
+  if (profile.bio && profile.bio.length > 200) {
+    return toast.error("Bio cannot exceed 200 characters");
+  }
+
+  if (profile.skills?.length > 10) {
+    return toast.error("You can only add up to 10 skills");
+  }
+
   setLoading(true);
 
   try {
     const formData = new FormData();
-
-    formData.append("username", profile.username);
+    formData.append("username", profile.username.trim());
     formData.append("bio", profile.bio);
     formData.append("location", profile.location);
     formData.append("age", profile.age);
@@ -127,29 +151,27 @@ const handleSave = async (e) => {
       });
       formData.append("avatar", compressedAvatar);
     }
-navigate("/home");
-    for (let [key, value] of formData.entries()) {
-      (`${key}:`, value);
-    }
 
     const res = await axios.post(
       `${API_URL}/api/profiles/setup/${user._id}`,
       formData,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
 
-    setProfile(res.data)
-
-    
+    setProfile(res.data);
+    toast.success("Profile updated successfully!");
+    navigate("/home");
   } catch (err) {
-console.error("❌ Error saving profile:", err.response?.data || err.message);  } finally {
+    const msg = err.response?.data?.message || "Failed to save profile";
+    toast.error(msg); 
+    console.error("❌ Error saving profile:", msg);
+  } finally {
     setLoading(false);
   }
 };
+
 
   return (
     <div className="min-h-screen flex justify-center items-center text-white px-4">
