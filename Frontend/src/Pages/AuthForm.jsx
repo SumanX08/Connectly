@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios"
 import { Link } from "react-router-dom";
 import { API_URL } from "../config";
+import { toast } from 'sonner'
+
 
 
 const AuthForm = () => {
@@ -17,32 +19,42 @@ const AuthForm = () => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!isLogin && form.password !== form.confirmPassword) {
-      return alert("Passwords do not match!");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!isLogin) {
+    if (form.password.length < 8) {
+      return toast.error("Password must be at least 8 characters long!");
     }
 
-    const url = isLogin
-      ? `${API_URL}/api/auth/login`
-      : `${API_URL}/api/auth/signup`;
-
-    const payload = {
-      email: form.email,
-      password: form.password,
-    };
-
-  
-    try {
-      const res = await axios.post(url, payload);
-      const { token, user } = res.data;
-      setUser(user, token);
-      isLogin ? navigate("/home") : navigate("/profileSetup")
-    } catch (error) {
-      console.error(error)
-      console.error("Auth failed:", error.response?.data?.message || error.message);
+    if (form.password !== form.confirmPassword) {
+      return toast.error("Passwords do not match!");
     }
+  }
+
+  const url = isLogin
+    ? `${API_URL}/api/auth/login`
+    : `${API_URL}/api/auth/signup`;
+
+  const payload = {
+    email: form.email,
+    password: form.password,
   };
+
+  try {
+    const res = await axios.post(url, payload);
+    const { token, user } = res.data;
+    setUser(user, token);
+    isLogin ? navigate("/home") : navigate("/profileSetup");
+  } catch (error) {
+    console.error("Auth failed:", error.response?.data?.message || error.message);
+
+    if (!isLogin && error.response?.data?.message?.includes("Email already exists")) {
+      toast.error("This email is already registered. Please login instead.");
+    }
+  }
+};
+
 
 
   return (
