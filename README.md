@@ -16,7 +16,7 @@ Built with the **MERN stack**, it combines a modern UI with real-time features t
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 **Frontend:** React, Tailwind CSS, Zustand, Framer Motion  
 **Backend:** Node.js, Express.js  
 **Database:** MongoDB (Mongoose ODM)  
@@ -26,8 +26,8 @@ Built with the **MERN stack**, it combines a modern UI with real-time features t
 ---
 
 ##  Demo
- **Live Demo:** [Your deployed link here]  
- **Demo Video:** [Your demo video link]  
+ **Live Demo:** [https://connectly-mu.vercel.app/]  
+
 
 ---
 
