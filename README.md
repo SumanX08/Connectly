@@ -31,4 +31,13 @@ Built with the **MERN stack**, it combines a modern UI with real-time features t
 
 ---
 
-##  Project Structure
+## ⚙️ Installation & Setup Guide  
+
+Follow these steps to run **Connectly** locally on your machine.  
+
+### 1️ Clone the Repository  
+```bash
+git clone https://github.com/your-username/connectly.git
+cd connectly
+
+#### 2️ Install Dependencies
