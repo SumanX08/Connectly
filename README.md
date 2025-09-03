@@ -38,6 +38,38 @@ Follow these steps to run **Connectly** locally on your machine.
 ### 1️ Clone the Repository  
 ```bash
 git clone https://github.com/your-username/connectly.git
-cd connectly
+cd connectly 
 
+```bash
 #### 2️ Install Dependencies
+Backend
+cd backend
+npm install
+
+Frontend
+cd ../frontend
+npm install
+
+### 3️ Set Up Environment Variables
+Backend (/backend/.env)
+PORT=5000
+MONGO_URI=your-mongodb-uri
+AUTH0_DOMAIN=your-auth0-domain
+AUTH0_CLIENT_ID=your-auth0-client-id
+AUTH0_CLIENT_SECRET=your-auth0-client-secret
+SOCKET_PORT=5001
+
+Frontend (/frontend/.env)
+VITE_AUTH0_DOMAIN=your-auth0-domain
+VITE_AUTH0_CLIENT_ID=your-auth0-client-id
+VITE_API_BASE_URL=http://localhost:5000
+VITE_SOCKET_URL=http://localhost:5001
+
+### 4️ Run the Development Servers
+Backend
+cd backend
+npm run dev
+
+Frontend
+cd frontend
+npm run dev
