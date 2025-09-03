@@ -31,27 +31,26 @@ Built with the **MERN stack**, it combines a modern UI with real-time features t
 
 ---
 
-## ⚙️ Installation & Setup Guide  
+##  Installation & Setup Guide  
 
 Follow these steps to run **Connectly** locally on your machine.  
 
-### 1️ Clone the Repository  
 ```bash
-git clone https://github.com/your-username/connectly.git
-cd connectly 
+# 1️ Clone the Repository
+git clone https://github.com/SumanX08/connectly.git
+cd connectly
 
-```bash
-#### 2️ Install Dependencies
-Backend
+# 2️ Install Dependencies
+# Backend
 cd backend
 npm install
 
-Frontend
+# Frontend
 cd ../frontend
 npm install
 
-### 3️ Set Up Environment Variables
-Backend (/backend/.env)
+# 3️ Set Up Environment Variables
+# Create a file at: /backend/.env
 PORT=5000
 MONGO_URI=your-mongodb-uri
 AUTH0_DOMAIN=your-auth0-domain
@@ -59,17 +58,21 @@ AUTH0_CLIENT_ID=your-auth0-client-id
 AUTH0_CLIENT_SECRET=your-auth0-client-secret
 SOCKET_PORT=5001
 
-Frontend (/frontend/.env)
+# Create a file at: /frontend/.env
 VITE_AUTH0_DOMAIN=your-auth0-domain
 VITE_AUTH0_CLIENT_ID=your-auth0-client-id
 VITE_API_BASE_URL=http://localhost:5000
 VITE_SOCKET_URL=http://localhost:5001
 
-### 4️ Run the Development Servers
-Backend
+# 4️ Run the Development Servers
+# Backend
 cd backend
 npm run dev
 
-Frontend
+# Frontend
 cd frontend
 npm run dev
+
+# 5️ Open in Browser
+# Frontend: http://localhost:5173
+# Backend API: http://localhost:5000
