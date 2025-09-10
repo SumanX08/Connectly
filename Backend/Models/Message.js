@@ -7,5 +7,5 @@ const MessageSchema = new mongoose.Schema({
   content: { type: String, required: true },
   timestamp: { type: Date, default: Date.now }
 }, { timestamps: true });
-s
+
 export default mongoose.model("Message", MessageSchema);
