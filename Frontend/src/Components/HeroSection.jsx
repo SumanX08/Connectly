@@ -43,12 +43,12 @@ const HeroSection = () => {
         className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full"
       >
         <Link to="/signup" className="w-full sm:w-64">
-          <button className="w-full cursor-pointer bg-white text-black px-1 py-3 rounded-md font-semibold hover:bg-gray-200 transition">
+          <button className="w-full cursor-pointer inset-shadow-2xs  bg-white text-black px-1 py-3 rounded-md font-semibold hover:bg-gray-200 transition">
             Make your first conection →
           </button>
         </Link>
         <Link to="/login" className="w-full sm:w-40">
-          <button className="w-full cursor-pointer bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-200 transition">
+          <button className="w-full cursor-pointer inset-shadow-2xs  bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-200 transition">
             Login
           </button>
         </Link>
