@@ -6,7 +6,7 @@ const HeroSection = () => {
 
 
   return (
- <section className="min-h-screen pt-20 lg:pt-10 pb-14 bg-black text-white flex flex-col items-center justify-center px-4 sm:px-6 lg:px-14">
+ <section className="min-h-screen pt-20 lg:pt-10 pb-14 bg-black text-white flex flex-col items-center justify-center px-4 sm:px-6 lg:px-12">
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center min-h-screen w-full max-w-7xl">
 <div>
     <div className="space-y-6 text-left ">
@@ -40,7 +40,7 @@ const HeroSection = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.6 }}
-        className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-5/6"
+        className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full"
       >
         <Link to="/signup" className="w-full sm:w-64">
           <button className="w-full cursor-pointer bg-white text-black px-1 py-3 rounded-md font-medium hover:bg-gray-200 transition">
