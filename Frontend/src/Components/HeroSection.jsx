@@ -44,7 +44,7 @@ const HeroSection = () => {
       >
         <Link to="/signup" className="w-full sm:w-40">
           <button className="w-full cursor-pointer bg-white text-black px-6 py-3 rounded-md font-medium hover:bg-gray-200 transition">
-            Make your first conenction now →
+            Make your first conenction →
           </button>
         </Link>
         <Link to="/login" className="w-full sm:w-40">
