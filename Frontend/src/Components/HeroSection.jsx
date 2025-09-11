@@ -42,8 +42,8 @@ const HeroSection = () => {
         transition={{ duration: 0.8, delay: 0.6 }}
         className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-5/6"
       >
-        <Link to="/signup" className="w-full sm:w-40">
-          <button className="w-full cursor-pointer bg-white text-black px-6 py-3 rounded-md font-medium hover:bg-gray-200 transition">
+        <Link to="/signup" className="w-full sm:w-64">
+          <button className="w-full cursor-pointer bg-white text-black px-1 py-3 rounded-md font-medium hover:bg-gray-200 transition">
             Make your first conenction →
           </button>
         </Link>
