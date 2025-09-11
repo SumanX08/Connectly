@@ -7,7 +7,7 @@ const HeroSection = () => {
 
   return (
  <section className="min-h-screen pt-20 lg:pt-10 pb-14 bg-black text-white flex flex-col items-center justify-center px-4 sm:px-6 lg:px-12">
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center min-h-screen w-full max-w-7xl">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center min-h-screen w-full md:px-20">
 <div>
     <div className="space-y-6 text-left ">
      <motion.h1
@@ -44,7 +44,7 @@ const HeroSection = () => {
       >
         <Link to="/signup" className="w-full sm:w-64">
           <button className="w-full cursor-pointer bg-white text-black px-1 py-3 rounded-md font-medium hover:bg-gray-200 transition">
-            Make your first conenction →
+            Make your first conection →
           </button>
         </Link>
         <Link to="/login" className="w-full sm:w-40">
