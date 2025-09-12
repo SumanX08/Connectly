@@ -47,8 +47,6 @@ app.use('/api/messages',chatRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    ('MongoDB Connected');
-    server.listen(PORT, () => (`Server running on port ${PORT}`));
-    console.log('running')
+    server.listen(PORT);
   })
   .catch(err => console.error('MongoDB Connection Error:', err));
