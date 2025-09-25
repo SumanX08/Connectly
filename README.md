@@ -26,7 +26,7 @@ Built with the **MERN stack**, it combines a modern UI with real-time features t
 ---
 
 ##  Demo
- **Live Demo:** https://connectly-mu.vercel.app 
+ **Live Demo:** https://connect-ly-app.vercel.app
 
 
 ---
