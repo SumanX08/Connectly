@@ -21,6 +21,12 @@ const allowedOrigins = [
 const app = express();
 const PORT = 5000; 
 
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  }));
+
 const server = http.createServer(app);
 initSocket(server, allowedOrigins);
 
@@ -32,13 +38,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.use(express.json());
-app.use(cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
 
-  }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profiles', profileRoutes);
