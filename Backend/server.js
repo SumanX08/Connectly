@@ -23,8 +23,7 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:5173',
   'https://connectly-mu.vercel.app',
-  'https://connectly-4pfl.onrender.com', // if you ever need the backend to call itself from frontend-like origin
-];
+'https://connect-ly-app.vercel.app'];
 
 const corsOptions = {
   origin(origin, callback) {
