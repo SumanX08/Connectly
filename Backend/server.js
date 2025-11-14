@@ -15,6 +15,7 @@ import passport from 'passport';
 const allowedOrigins = [
   "http://localhost:5173", 
   "https://connectly-mu.vercel.app", 
+  *
 ];
 
 
