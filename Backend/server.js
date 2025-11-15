@@ -15,13 +15,13 @@ import passport from 'passport';
 const allowedOrigins = [
   "http://localhost:5173", 
   "https://connectly-mu.vercel.app", 
-  "https://connect-ly-app.vercel.app", // Add this origin
+  "https://connect-ly-app.vercel.app",
 ];
 
 const corsOptions = {
   origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, // Allow cookies and credentials
+  credentials: true,
 };
 
 const app = express();
@@ -32,7 +32,7 @@ initSocket(server, allowedOrigins);
 
 dotenv.config();
 
-app.use(cors(corsOptions)); // Add CORS middleware here
+app.use(cors(corsOptions)); 
 
 app.use(session({secret:'secret',resave:false,saveUninitialized:false}))
 app.use(passport.initialize())
