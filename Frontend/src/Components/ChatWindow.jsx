@@ -142,18 +142,15 @@ socket.emit("send-message", {
       )
       .then((res) => {
         const sentMessage = res.data;
-        // Replace temp message with server message
         setMessages((prev) =>
           prev.map((msg) => (msg._id === tempId ? sentMessage : msg))
         );
       })
       .catch((err) => {
         console.error("Failed to send message:", err);
-        // Optional: mark message as failed
       });
   };
 
-  // Fully stable socket listener for real-time messages
   
 
 
@@ -176,7 +173,6 @@ socket.emit("send-message", {
         transition={{ duration: 0.3 }}
         className="flex flex-col md:px-6 bg-black w-full md:w-3/4"
       >
-        {/* Chat header */}
         <div className="flex-shrink-0 flex gap-2 items-center mb-4 pb-2 border-b border-gray-800 h-16">
           <button
             onClick={onBack}
@@ -196,7 +192,6 @@ socket.emit("send-message", {
           </div>
         </div>
 
-        {/* Messages list */}
         <div
           className="flex-grow overflow-y-auto pr-2 pb-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
           onScroll={(e) => {
@@ -212,7 +207,6 @@ socket.emit("send-message", {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
         <div className="flex-shrink-0 flex gap-2 p-2 border-t border-gray-800 bg-black">
           <input
             value={input}
