@@ -1,6 +1,5 @@
 # Connectly – Skill-Based Networking Platform
 
-##  About the Project
 **Connectly** is a skill-based networking platform that helps users build meaningful connections based on their skills and interests.  
 Built with the **MERN stack**, it combines a modern UI with real-time features to deliver a seamless networking experience.
 
