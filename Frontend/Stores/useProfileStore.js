@@ -1,14 +1,13 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
 
 const useProfileStore = create(
   persist(
     (set) => ({
       profile: null,
-      allProfiles: [],     // Users to swipe
-      requests: [],        // Sent or received connection requests
-      matches: [],         // Accepted matches
-
+      allProfiles: [],    
+      requests: [],       
+      matches: [],        
       setProfile: (profile) => set({ profile }),
 
       updateProfile: (updates) =>
@@ -20,7 +19,6 @@ const useProfileStore = create(
       setRequests: (requests) => set({ requests }),
       setMatches: (matches) => set({ matches }),
 
-      // Optional: helpers for updating arrays
       addRequest: (request) =>
         set((state) => ({ requests: [...state.requests, request] })),
 
