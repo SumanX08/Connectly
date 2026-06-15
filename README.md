@@ -32,7 +32,7 @@ Built with the **MERN stack**, it combines a modern UI with real-time features t
 
 ##  Installation & Setup Guide  
 
-Follow these steps to run **Connectly** locally on your machine.  
+Follow these steps to run **Connectly** locally on your machine
 
 ```bash
 # 1️ Clone the Repository
