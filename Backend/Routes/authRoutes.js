@@ -1,10 +1,10 @@
-import express from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import User from '../Models/User.js';
+import express from 'express'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import User from '../Models/User.js'
 import crypto from 'crypto'
-import { sendResetEmail } from '../Utils/sendEmail.js';
-import passport from "passport";
+import { sendResetEmail } from '../Utils/sendEmail.js'
+import passport from "passport"
 
 const router = express.Router();
 const frontendURL = process.env.FRONTEND_URL || "http://localhost:5173";
